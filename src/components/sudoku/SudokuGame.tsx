@@ -23,11 +23,13 @@ import {
   findBoardConflicts,
   getRandomMediumPuzzle,
   solveSudoku,
+  isBoardCompleteAndValid,
 } from '../../utils/sudoku';
 import {
   fetchRandomPuzzle,
   generateNewPuzzle,
   verifySudokuAndUnlock,
+  getLocalPublishedMessages,
 } from '../../services/api';
 import { audioManager } from '../../utils/audio';
 
@@ -309,12 +311,75 @@ export const SudokuGame: React.FC<SudokuGameProps> = ({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleInputNumber, handleErase, handleUndo]);
 
-  // Verify board completion with server
+  // Immediately celebrate and show victory modal without waiting
+  const triggerVictory = async (boardToVerify: number[][]) => {
+    if (!puzzle || isVictoryModalOpen) return;
+    setIsTimerRunning(false);
+    setErrorCells([]);
+    audioManager.playVictoryFanfare();
+
+    // Immediately load unlocked messages and open victory modal without requiring any button click!
+    const immediateMessages = getLocalPublishedMessages();
+    setUnlockedMessages(immediateMessages);
+    setIsVictoryModalOpen(true);
+
+    // Confetti celebration
+    try {
+      confetti({
+        particleCount: 130,
+        spread: 85,
+        origin: { y: 0.6 },
+      });
+      setTimeout(() => {
+        confetti({
+          particleCount: 80,
+          angle: 60,
+          spread: 55,
+          origin: { x: 0 },
+        });
+        confetti({
+          particleCount: 80,
+          angle: 120,
+          spread: 55,
+          origin: { x: 1 },
+        });
+      }, 250);
+    } catch {
+      // ignore confetti errors
+    }
+
+    // Background verify and token sync
+    try {
+      const result = await verifySudokuAndUnlock(puzzle.id, boardToVerify);
+      if (result.success && result.messages) {
+        setUnlockedMessages(result.messages);
+      }
+    } catch (err) {
+      console.warn('Background sync error, local unlocked messages used:', err);
+    }
+  };
+
+  // Automatically trigger victory when all cells are filled and valid
+  useEffect(() => {
+    if (!puzzle || isVictoryModalOpen || currentBoard.length === 0) return;
+
+    for (let r = 0; r < 9; r++) {
+      for (let c = 0; c < 9; c++) {
+        if (currentBoard[r][c] === 0) return;
+      }
+    }
+
+    if (isBoardCompleteAndValid(currentBoard)) {
+      triggerVictory(currentBoard);
+    }
+  }, [currentBoard, puzzle, isVictoryModalOpen]);
+
+  // Verify board completion (manual fallback)
   const handleVerify = async () => {
     if (!puzzle) return;
     setIsVerifying(true);
 
-    // First check locally if board is completely filled
+    // Check if board is complete
     let isComplete = true;
     for (let r = 0; r < 9; r++) {
       for (let c = 0; c < 9; c++) {
@@ -327,7 +392,6 @@ export const SudokuGame: React.FC<SudokuGameProps> = ({
     }
 
     if (!isComplete) {
-      // Find current conflicts on filled cells to assist user
       const conflicts = findBoardConflicts(currentBoard);
       setErrorCells(conflicts);
       showToast('Bàn cờ chưa điền hết các ô trống. Hãy tiếp tục giải nhé!', 'info');
@@ -335,55 +399,19 @@ export const SudokuGame: React.FC<SudokuGameProps> = ({
       return;
     }
 
-    try {
-      const result = await verifySudokuAndUnlock(puzzle.id, currentBoard);
-
-      if (result.success && result.messages) {
-        // VICTORY!
-        setIsTimerRunning(false);
-        setUnlockedMessages(result.messages);
-        setIsVictoryModalOpen(true);
-        setErrorCells([]);
-        audioManager.playVictoryFanfare();
-
-        // Confetti effect
-        try {
-          confetti({
-            particleCount: 120,
-            spread: 80,
-            origin: { y: 0.6 },
-          });
-          setTimeout(() => {
-            confetti({
-              particleCount: 80,
-              angle: 60,
-              spread: 55,
-              origin: { x: 0 },
-            });
-            confetti({
-              particleCount: 80,
-              angle: 120,
-              spread: 55,
-              origin: { x: 1 },
-            });
-          }, 300);
-        } catch {
-          // ignore confetti errors
-        }
-      } else {
-        // Incorrect board
-        const conflicts = findBoardConflicts(currentBoard);
-        setErrorCells(conflicts);
-        showToast(result.message || 'Có một số ô chưa chính xác theo quy tắc Sudoku hoặc lời giải của đề.', 'error');
-      }
-    } catch (err: any) {
-      showToast('Lỗi xác thực bàn cờ: ' + err.message, 'error');
-    } finally {
+    if (isBoardCompleteAndValid(currentBoard)) {
+      await triggerVictory(currentBoard);
       setIsVerifying(false);
+      return;
     }
+
+    const conflicts = findBoardConflicts(currentBoard);
+    setErrorCells(conflicts);
+    showToast('Có một số ô chưa chính xác theo quy tắc Sudoku, hãy kiểm tra lại nhé!', 'error');
+    setIsVerifying(false);
   };
 
-  // Quick fill solution for dev testing & verification
+  // Quick fill solution for testing: triggers instant victory modal!
   const handleDevQuickSolve = () => {
     if (!puzzle) return;
     const boardCopy = cloneBoard(puzzle.initial);
@@ -392,7 +420,7 @@ export const SudokuGame: React.FC<SudokuGameProps> = ({
       setNotes(createEmptyNotes());
       setErrorCells(Array.from({ length: 9 }, () => Array(9).fill(false)));
       audioManager.playClick(1.2);
-      showToast('⚡ Đã tự động điền đáp án chuẩn! Giờ bạn có thể bấm "Kiểm Tra Lời Giải" để mở khóa bức thư bí mật.', 'success');
+      triggerVictory(boardCopy);
     } else {
       showToast('Không thể giải bàn cờ này', 'error');
     }
