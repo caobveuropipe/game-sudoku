@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { MessageSequence, SudokuPuzzle } from '../src/types';
+import type { MessageSequence, SudokuPuzzle } from '../src/types';
 import { CURATED_MEDIUM_PUZZLES, isBoardCompleteAndValid } from '../src/utils/sudoku';
 
 const DATA_DIR = path.resolve(process.cwd(), 'data');

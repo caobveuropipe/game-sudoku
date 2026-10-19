@@ -1,4 +1,4 @@
-import { MessageSequence } from '../types';
+import type { MessageSequence } from '../types';
 
 export const INITIAL_SAMPLE_MESSAGES: MessageSequence = {
   id: 'secret-sequence-default',
