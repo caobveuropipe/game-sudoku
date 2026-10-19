@@ -110,161 +110,1317 @@ export function findBoardConflicts(board: number[][]): boolean[][] {
   return conflicts;
 }
 
-// Curated library of verified Medium puzzles (exactly 1 solution, 31-33 clues)
+// Curated library of verified Medium puzzles (exactly 1 solution, 34 balanced clues, center box always populated)
 export const CURATED_MEDIUM_PUZZLES: SudokuPuzzle[] = [
   {
-    id: 'medium-puzzle-01',
-    difficulty: 'medium',
-    cluesCount: 32,
-    initial: [
-      [0, 2, 0, 6, 0, 8, 0, 0, 0],
-      [5, 8, 0, 0, 0, 9, 7, 0, 0],
-      [0, 0, 0, 0, 4, 0, 0, 0, 0],
-      [3, 7, 0, 0, 0, 0, 5, 0, 0],
-      [6, 0, 0, 0, 0, 0, 0, 0, 4],
-      [0, 0, 8, 0, 0, 0, 0, 1, 3],
-      [0, 0, 0, 0, 2, 0, 0, 0, 0],
-      [0, 0, 9, 8, 0, 0, 0, 3, 6],
-      [0, 0, 0, 3, 0, 6, 0, 9, 0],
+    "id": "medium-puzzle-01",
+    "difficulty": "medium",
+    "cluesCount": 34,
+    "initial": [
+      [
+        8,
+        4,
+        1,
+        0,
+        0,
+        0,
+        9,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        9,
+        0,
+        0,
+        8,
+        1
+      ],
+      [
+        0,
+        3,
+        0,
+        1,
+        8,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        8,
+        0,
+        2,
+        7,
+        0,
+        9,
+        5
+      ],
+      [
+        5,
+        1,
+        0,
+        0,
+        0,
+        3,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        2,
+        0,
+        5,
+        0,
+        0,
+        0,
+        0,
+        4
+      ],
+      [
+        0,
+        0,
+        0,
+        7,
+        0,
+        2,
+        6,
+        4,
+        9
+      ],
+      [
+        4,
+        5,
+        0,
+        0,
+        0,
+        9,
+        7,
+        0,
+        8
+      ],
+      [
+        0,
+        9,
+        7,
+        0,
+        0,
+        0,
+        0,
+        3,
+        0
+      ]
     ],
-    solution: [
-      [1, 2, 3, 6, 7, 8, 9, 4, 5],
-      [5, 8, 4, 2, 3, 9, 7, 6, 1],
-      [9, 6, 7, 1, 4, 5, 3, 2, 8],
-      [3, 7, 2, 4, 6, 1, 5, 8, 9],
-      [6, 9, 1, 5, 8, 3, 2, 7, 4],
-      [4, 5, 8, 7, 9, 2, 6, 1, 3],
-      [8, 3, 6, 9, 2, 4, 1, 5, 7],
-      [2, 1, 9, 8, 5, 7, 4, 3, 6],
-      [7, 4, 5, 3, 1, 6, 8, 9, 2],
-    ],
+    "solution": [
+      [
+        8,
+        4,
+        1,
+        2,
+        7,
+        6,
+        9,
+        5,
+        3
+      ],
+      [
+        2,
+        7,
+        6,
+        3,
+        9,
+        5,
+        4,
+        8,
+        1
+      ],
+      [
+        9,
+        3,
+        5,
+        1,
+        8,
+        4,
+        2,
+        7,
+        6
+      ],
+      [
+        3,
+        6,
+        8,
+        4,
+        2,
+        7,
+        1,
+        9,
+        5
+      ],
+      [
+        5,
+        1,
+        4,
+        9,
+        6,
+        3,
+        8,
+        2,
+        7
+      ],
+      [
+        7,
+        2,
+        9,
+        5,
+        1,
+        8,
+        3,
+        6,
+        4
+      ],
+      [
+        1,
+        8,
+        3,
+        7,
+        5,
+        2,
+        6,
+        4,
+        9
+      ],
+      [
+        4,
+        5,
+        2,
+        6,
+        3,
+        9,
+        7,
+        1,
+        8
+      ],
+      [
+        6,
+        9,
+        7,
+        8,
+        4,
+        1,
+        5,
+        3,
+        2
+      ]
+    ]
   },
   {
-    id: 'medium-puzzle-02',
-    difficulty: 'medium',
-    cluesCount: 32,
-    initial: [
-      [0, 0, 0, 2, 6, 0, 7, 0, 1],
-      [6, 8, 0, 0, 7, 0, 0, 9, 0],
-      [1, 9, 0, 0, 0, 4, 5, 0, 0],
-      [8, 2, 0, 1, 0, 0, 0, 4, 0],
-      [0, 0, 4, 6, 0, 2, 9, 0, 0],
-      [0, 5, 0, 0, 0, 3, 0, 2, 8],
-      [0, 0, 9, 3, 0, 0, 0, 7, 4],
-      [0, 4, 0, 0, 5, 0, 0, 3, 6],
-      [7, 0, 3, 0, 1, 8, 0, 0, 0],
+    "id": "medium-puzzle-02",
+    "difficulty": "medium",
+    "cluesCount": 34,
+    "initial": [
+      [
+        0,
+        0,
+        0,
+        7,
+        0,
+        0,
+        2,
+        8,
+        6
+      ],
+      [
+        0,
+        3,
+        9,
+        0,
+        4,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        8,
+        2,
+        7,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        3,
+        5,
+        0,
+        0,
+        8,
+        7,
+        6,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        8,
+        0,
+        3,
+        2,
+        4,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        4,
+        0,
+        6,
+        0,
+        0,
+        0,
+        8
+      ],
+      [
+        5,
+        8,
+        0,
+        0,
+        0,
+        4,
+        0,
+        6,
+        7
+      ],
+      [
+        0,
+        0,
+        3,
+        8,
+        0,
+        0,
+        0,
+        5,
+        0
+      ],
+      [
+        0,
+        4,
+        0,
+        9,
+        7,
+        0,
+        0,
+        0,
+        0
+      ]
     ],
-    solution: [
-      [4, 3, 5, 2, 6, 9, 7, 8, 1],
-      [6, 8, 2, 5, 7, 1, 4, 9, 3],
-      [1, 9, 7, 8, 3, 4, 5, 6, 2],
-      [8, 2, 6, 1, 9, 5, 3, 4, 7],
-      [3, 7, 4, 6, 8, 2, 9, 1, 5],
-      [9, 5, 1, 7, 4, 3, 6, 2, 8],
-      [5, 1, 9, 3, 2, 6, 8, 7, 4],
-      [2, 4, 8, 9, 5, 7, 1, 3, 6],
-      [7, 6, 3, 4, 1, 8, 2, 5, 9],
-    ],
+    "solution": [
+      [
+        4,
+        1,
+        5,
+        7,
+        9,
+        3,
+        2,
+        8,
+        6
+      ],
+      [
+        6,
+        3,
+        9,
+        2,
+        4,
+        8,
+        7,
+        1,
+        5
+      ],
+      [
+        8,
+        2,
+        7,
+        6,
+        5,
+        1,
+        3,
+        4,
+        9
+      ],
+      [
+        3,
+        5,
+        1,
+        4,
+        8,
+        7,
+        6,
+        9,
+        2
+      ],
+      [
+        9,
+        6,
+        8,
+        5,
+        3,
+        2,
+        4,
+        7,
+        1
+      ],
+      [
+        2,
+        7,
+        4,
+        1,
+        6,
+        9,
+        5,
+        3,
+        8
+      ],
+      [
+        5,
+        8,
+        2,
+        3,
+        1,
+        4,
+        9,
+        6,
+        7
+      ],
+      [
+        7,
+        9,
+        3,
+        8,
+        2,
+        6,
+        1,
+        5,
+        4
+      ],
+      [
+        1,
+        4,
+        6,
+        9,
+        7,
+        5,
+        8,
+        2,
+        3
+      ]
+    ]
   },
   {
-    id: 'medium-puzzle-03',
-    difficulty: 'medium',
-    cluesCount: 33,
-    initial: [
-      [1, 0, 0, 4, 8, 9, 0, 0, 6],
-      [7, 3, 0, 0, 0, 0, 0, 4, 0],
-      [0, 0, 0, 0, 0, 1, 2, 9, 5],
-      [0, 0, 7, 1, 2, 0, 6, 0, 0],
-      [5, 0, 0, 7, 0, 3, 0, 0, 8],
-      [0, 0, 6, 0, 9, 5, 7, 0, 0],
-      [9, 1, 4, 6, 0, 0, 0, 0, 0],
-      [0, 2, 0, 0, 0, 0, 0, 3, 7],
-      [8, 0, 0, 5, 1, 2, 0, 0, 4],
+    "id": "medium-puzzle-03",
+    "difficulty": "medium",
+    "cluesCount": 34,
+    "initial": [
+      [
+        7,
+        0,
+        2,
+        0,
+        0,
+        8,
+        9,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        8,
+        0,
+        0,
+        9,
+        0,
+        0,
+        2
+      ],
+      [
+        0,
+        0,
+        9,
+        0,
+        1,
+        0,
+        0,
+        0,
+        4
+      ],
+      [
+        1,
+        0,
+        3,
+        0,
+        5,
+        2,
+        0,
+        6,
+        0
+      ],
+      [
+        0,
+        2,
+        0,
+        9,
+        0,
+        1,
+        3,
+        0,
+        0
+      ],
+      [
+        0,
+        5,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        8
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        2,
+        4,
+        0,
+        9,
+        5
+      ],
+      [
+        0,
+        7,
+        0,
+        8,
+        0,
+        0,
+        6,
+        0,
+        3
+      ],
+      [
+        4,
+        0,
+        5,
+        6,
+        0,
+        3,
+        0,
+        0,
+        0
+      ]
     ],
-    solution: [
-      [1, 5, 2, 4, 8, 9, 3, 7, 6],
-      [7, 3, 9, 2, 5, 6, 8, 4, 1],
-      [4, 6, 8, 3, 7, 1, 2, 9, 5],
-      [3, 8, 7, 1, 2, 4, 6, 5, 9],
-      [5, 9, 1, 7, 6, 3, 4, 2, 8],
-      [2, 4, 6, 8, 9, 5, 7, 1, 3],
-      [9, 1, 4, 6, 3, 7, 5, 8, 2],
-      [6, 2, 5, 9, 4, 8, 1, 3, 7],
-      [8, 7, 3, 5, 1, 2, 9, 6, 4],
-    ],
+    "solution": [
+      [
+        7,
+        1,
+        2,
+        5,
+        4,
+        8,
+        9,
+        3,
+        6
+      ],
+      [
+        5,
+        4,
+        8,
+        3,
+        6,
+        9,
+        1,
+        7,
+        2
+      ],
+      [
+        3,
+        6,
+        9,
+        2,
+        1,
+        7,
+        5,
+        8,
+        4
+      ],
+      [
+        1,
+        8,
+        3,
+        7,
+        5,
+        2,
+        4,
+        6,
+        9
+      ],
+      [
+        6,
+        2,
+        4,
+        9,
+        8,
+        1,
+        3,
+        5,
+        7
+      ],
+      [
+        9,
+        5,
+        7,
+        4,
+        3,
+        6,
+        2,
+        1,
+        8
+      ],
+      [
+        8,
+        3,
+        6,
+        1,
+        2,
+        4,
+        7,
+        9,
+        5
+      ],
+      [
+        2,
+        7,
+        1,
+        8,
+        9,
+        5,
+        6,
+        4,
+        3
+      ],
+      [
+        4,
+        9,
+        5,
+        6,
+        7,
+        3,
+        8,
+        2,
+        1
+      ]
+    ]
   },
   {
-    id: 'medium-puzzle-04',
-    difficulty: 'medium',
-    cluesCount: 31,
-    initial: [
-      [0, 0, 0, 0, 0, 0, 0, 1, 2],
-      [0, 0, 0, 0, 3, 5, 0, 0, 0],
-      [0, 0, 0, 6, 0, 0, 0, 7, 0],
-      [7, 0, 0, 0, 0, 0, 3, 0, 0],
-      [0, 0, 0, 4, 0, 0, 8, 0, 0],
-      [1, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 1, 2, 0, 0, 0, 0],
-      [0, 8, 0, 0, 0, 0, 0, 4, 0],
-      [0, 5, 0, 0, 0, 0, 6, 0, 0],
+    "id": "medium-puzzle-04",
+    "difficulty": "medium",
+    "cluesCount": 34,
+    "initial": [
+      [
+        0,
+        9,
+        6,
+        3,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        4,
+        7,
+        0,
+        6
+      ],
+      [
+        0,
+        5,
+        0,
+        0,
+        0,
+        6,
+        3,
+        0,
+        0
+      ],
+      [
+        4,
+        3,
+        7,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        8,
+        9,
+        4,
+        0
+      ],
+      [
+        5,
+        0,
+        0,
+        4,
+        3,
+        2,
+        0,
+        0,
+        7
+      ],
+      [
+        0,
+        4,
+        2,
+        7,
+        8,
+        0,
+        0,
+        9,
+        0
+      ],
+      [
+        9,
+        0,
+        8,
+        0,
+        2,
+        0,
+        0,
+        0,
+        4
+      ],
+      [
+        0,
+        7,
+        0,
+        0,
+        0,
+        1,
+        2,
+        3,
+        8
+      ]
     ],
-    solution: [
-      [6, 7, 3, 8, 9, 4, 5, 1, 2],
-      [9, 1, 2, 7, 3, 5, 4, 8, 6],
-      [8, 4, 5, 6, 1, 2, 9, 7, 3],
-      [7, 9, 8, 2, 6, 1, 3, 5, 4],
-      [5, 2, 6, 4, 7, 3, 8, 9, 1],
-      [1, 3, 4, 5, 8, 9, 2, 6, 7],
-      [4, 6, 9, 1, 2, 8, 7, 3, 5],
-      [2, 8, 7, 3, 5, 6, 1, 4, 9],
-      [3, 5, 1, 9, 4, 7, 6, 2, 8],
-    ],
+    "solution": [
+      [
+        8,
+        9,
+        6,
+        3,
+        5,
+        7,
+        4,
+        1,
+        2
+      ],
+      [
+        1,
+        2,
+        3,
+        8,
+        9,
+        4,
+        7,
+        5,
+        6
+      ],
+      [
+        7,
+        5,
+        4,
+        2,
+        1,
+        6,
+        3,
+        8,
+        9
+      ],
+      [
+        4,
+        3,
+        7,
+        1,
+        6,
+        9,
+        8,
+        2,
+        5
+      ],
+      [
+        2,
+        6,
+        1,
+        5,
+        7,
+        8,
+        9,
+        4,
+        3
+      ],
+      [
+        5,
+        8,
+        9,
+        4,
+        3,
+        2,
+        1,
+        6,
+        7
+      ],
+      [
+        3,
+        4,
+        2,
+        7,
+        8,
+        5,
+        6,
+        9,
+        1
+      ],
+      [
+        9,
+        1,
+        8,
+        6,
+        2,
+        3,
+        5,
+        7,
+        4
+      ],
+      [
+        6,
+        7,
+        5,
+        9,
+        4,
+        1,
+        2,
+        3,
+        8
+      ]
+    ]
   },
+  {
+    "id": "medium-puzzle-05",
+    "difficulty": "medium",
+    "cluesCount": 34,
+    "initial": [
+      [
+        0,
+        0,
+        0,
+        5,
+        7,
+        0,
+        0,
+        4,
+        0
+      ],
+      [
+        0,
+        0,
+        6,
+        0,
+        0,
+        0,
+        8,
+        0,
+        7
+      ],
+      [
+        7,
+        0,
+        9,
+        0,
+        8,
+        0,
+        2,
+        0,
+        0
+      ],
+      [
+        8,
+        0,
+        0,
+        1,
+        2,
+        0,
+        0,
+        5,
+        4
+      ],
+      [
+        0,
+        0,
+        4,
+        8,
+        0,
+        3,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        9,
+        2,
+        0,
+        0,
+        5,
+        0,
+        0,
+        6
+      ],
+      [
+        0,
+        2,
+        0,
+        0,
+        1,
+        7,
+        4,
+        0,
+        0
+      ],
+      [
+        0,
+        8,
+        0,
+        2,
+        0,
+        0,
+        0,
+        6,
+        0
+      ],
+      [
+        4,
+        0,
+        1,
+        9,
+        6,
+        0,
+        0,
+        2,
+        0
+      ]
+    ],
+    "solution": [
+      [
+        3,
+        1,
+        8,
+        5,
+        7,
+        2,
+        6,
+        4,
+        9
+      ],
+      [
+        2,
+        5,
+        6,
+        4,
+        3,
+        9,
+        8,
+        1,
+        7
+      ],
+      [
+        7,
+        4,
+        9,
+        6,
+        8,
+        1,
+        2,
+        3,
+        5
+      ],
+      [
+        8,
+        3,
+        7,
+        1,
+        2,
+        6,
+        9,
+        5,
+        4
+      ],
+      [
+        5,
+        6,
+        4,
+        8,
+        9,
+        3,
+        1,
+        7,
+        2
+      ],
+      [
+        1,
+        9,
+        2,
+        7,
+        4,
+        5,
+        3,
+        8,
+        6
+      ],
+      [
+        6,
+        2,
+        5,
+        3,
+        1,
+        7,
+        4,
+        9,
+        8
+      ],
+      [
+        9,
+        8,
+        3,
+        2,
+        5,
+        4,
+        7,
+        6,
+        1
+      ],
+      [
+        4,
+        7,
+        1,
+        9,
+        6,
+        8,
+        5,
+        2,
+        3
+      ]
+    ]
+  },
+  {
+    "id": "medium-puzzle-06",
+    "difficulty": "medium",
+    "cluesCount": 34,
+    "initial": [
+      [
+        0,
+        0,
+        0,
+        9,
+        4,
+        6,
+        0,
+        5,
+        0
+      ],
+      [
+        7,
+        2,
+        0,
+        8,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        6,
+        0,
+        1,
+        0,
+        0,
+        0,
+        4,
+        8
+      ],
+      [
+        1,
+        0,
+        0,
+        0,
+        8,
+        0,
+        0,
+        0,
+        6
+      ],
+      [
+        6,
+        0,
+        7,
+        0,
+        0,
+        1,
+        8,
+        0,
+        0
+      ],
+      [
+        0,
+        9,
+        5,
+        0,
+        6,
+        3,
+        1,
+        0,
+        0
+      ],
+      [
+        2,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        8,
+        0
+      ],
+      [
+        9,
+        0,
+        0,
+        3,
+        0,
+        0,
+        0,
+        0,
+        7
+      ],
+      [
+        0,
+        0,
+        6,
+        0,
+        9,
+        7,
+        2,
+        3,
+        0
+      ]
+    ],
+    "solution": [
+      [
+        3,
+        1,
+        8,
+        9,
+        4,
+        6,
+        7,
+        5,
+        2
+      ],
+      [
+        7,
+        2,
+        4,
+        8,
+        3,
+        5,
+        6,
+        1,
+        9
+      ],
+      [
+        5,
+        6,
+        9,
+        1,
+        7,
+        2,
+        3,
+        4,
+        8
+      ],
+      [
+        1,
+        3,
+        2,
+        4,
+        8,
+        9,
+        5,
+        7,
+        6
+      ],
+      [
+        6,
+        4,
+        7,
+        2,
+        5,
+        1,
+        8,
+        9,
+        3
+      ],
+      [
+        8,
+        9,
+        5,
+        7,
+        6,
+        3,
+        1,
+        2,
+        4
+      ],
+      [
+        2,
+        7,
+        3,
+        6,
+        1,
+        4,
+        9,
+        8,
+        5
+      ],
+      [
+        9,
+        5,
+        1,
+        3,
+        2,
+        8,
+        4,
+        6,
+        7
+      ],
+      [
+        4,
+        8,
+        6,
+        5,
+        9,
+        7,
+        2,
+        3,
+        1
+      ]
+    ]
+  }
 ];
 
-// Generate a random medium puzzle on the fly with 1 unique solution
+// Generate a random medium puzzle on the fly with strict balance & 1 unique solution
 export function generateMediumSudoku(): SudokuPuzzle {
-  // Start with a solved board
-  const board = createEmptyBoard();
-  solveSudoku(board);
-  const solution = cloneBoard(board);
+  const targetClues = 34; // Medium difficulty standard (34 clues)
 
-  // Random cell coordinates
-  const positions: [number, number][] = [];
-  for (let r = 0; r < 9; r++) {
-    for (let c = 0; c < 9; c++) {
-      positions.push([r, c]);
+  for (let attempt = 0; attempt < 200; attempt++) {
+    const board = createEmptyBoard();
+    solveSudoku(board);
+    const solution = cloneBoard(board);
+    const puzzleBoard = cloneBoard(solution);
+
+    const rowClues = Array(9).fill(9);
+    const colClues = Array(9).fill(9);
+    const boxClues = Array(9).fill(9);
+    let clues = 81;
+
+    // Random cell coordinates
+    const positions: [number, number][] = [];
+    for (let r = 0; r < 9; r++) {
+      for (let c = 0; c < 9; c++) {
+        positions.push([r, c]);
+      }
+    }
+    positions.sort(() => Math.random() - 0.5);
+
+    for (const [r, c] of positions) {
+      if (clues <= targetClues) break;
+      const b = Math.floor(r / 3) * 3 + Math.floor(c / 3);
+
+      // Strict balance constraints for Medium level:
+      // 1. Center box (b === 4) MUST keep at least 4 clues (never empty!)
+      // 2. All other boxes MUST keep at least 3 clues
+      // 3. Every row and column MUST keep at least 3 clues
+      const minBox = (b === 4) ? 4 : 3;
+      if (rowClues[r] <= 3 || colClues[c] <= 3 || boxClues[b] <= minBox) continue;
+
+      const temp = puzzleBoard[r][c];
+      puzzleBoard[r][c] = 0;
+
+      // Check if still uniquely solvable
+      const testCopy = cloneBoard(puzzleBoard);
+      const count = countSolutions(testCopy, { val: 0 }, 2);
+
+      if (count !== 1) {
+        puzzleBoard[r][c] = temp; // Restore
+      } else {
+        rowClues[r]--;
+        colClues[c]--;
+        boxClues[b]--;
+        clues--;
+      }
+    }
+
+    if (clues >= 32 && clues <= 36 && boxClues[4] >= 4) {
+      return {
+        id: 'medium-gen-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
+        difficulty: 'medium',
+        cluesCount: clues,
+        initial: puzzleBoard,
+        solution: solution,
+      };
     }
   }
-  positions.sort(() => Math.random() - 0.5);
 
-  const puzzleBoard = cloneBoard(solution);
-  let clues = 81;
-  const targetClues = 32; // Medium difficulty standard
-
-  for (const [r, c] of positions) {
-    if (clues <= targetClues) break;
-    const temp = puzzleBoard[r][c];
-    puzzleBoard[r][c] = 0;
-
-    // Check if still uniquely solvable
-    const testCopy = cloneBoard(puzzleBoard);
-    const count = countSolutions(testCopy, { val: 0 }, 2);
-
-    if (count !== 1) {
-      puzzleBoard[r][c] = temp; // Restore
-    } else {
-      clues--;
-    }
-  }
-
-  return {
-    id: `medium-gen-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
-    difficulty: 'medium',
-    cluesCount: clues,
-    initial: puzzleBoard,
-    solution: solution,
-  };
+  // Fallback to one of the curated verified puzzles if generation timed out
+  return getRandomMediumPuzzle();
 }
 
 export function getRandomMediumPuzzle(): SudokuPuzzle {
