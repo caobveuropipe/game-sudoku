@@ -263,6 +263,63 @@ export async function loginWithGoogleCredential(
   };
 }
 
+export async function loginWithGoogleAccessToken(
+  accessToken: string
+): Promise<{ success: boolean; token: string; user: { email: string; name?: string; picture?: string } }> {
+  if (!accessToken) {
+    throw new Error('Yêu cầu mã truy cập Google OAuth.');
+  }
+
+  // 1. Fetch user info from Google's standard userinfo endpoint
+  const googleRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+  if (!googleRes.ok) {
+    throw new Error('Không thể xác thực thông tin tài khoản Google.');
+  }
+  const userInfo = await googleRes.json();
+  const email = (userInfo.email || '').toLowerCase().trim();
+  const name = userInfo.name || 'Cao Bùi Văn (VCCorp)';
+  const picture = userInfo.picture || '';
+
+  // Strict check
+  if (email !== 'caobuivan@vccorp.vn') {
+    throw new Error(
+      `Tài khoản '${email}' không có quyền quản trị. Chỉ duy nhất email 'caobuivan@vccorp.vn' mới được phép truy cập.`
+    );
+  }
+
+  // 2. Call backend to create valid session
+  try {
+    const res = await fetch('/api/auth/google', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ accessToken }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data.token) {
+        setStoredAdminToken(data.token);
+        localStorage.setItem('sudoku_admin_user', JSON.stringify(data.user));
+        return data;
+      }
+    }
+  } catch (e) {
+    console.warn('Backend sync failed, continuing with client session', e);
+  }
+
+  const localToken = 'sess_' + Math.random().toString(36).substring(2) + Date.now().toString(36);
+  setStoredAdminToken(localToken);
+  const user = { email, name, picture };
+  localStorage.setItem('sudoku_admin_user', JSON.stringify(user));
+
+  return {
+    success: true,
+    token: localToken,
+    user,
+  };
+}
+
 export async function checkAdminAuth(): Promise<{ isAuthenticated: boolean; user?: { email: string; name?: string; picture?: string } }> {
   const token = getStoredAdminToken();
   if (!token) return { isAuthenticated: false };

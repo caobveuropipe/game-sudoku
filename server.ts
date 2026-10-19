@@ -3,7 +3,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import { ADMIN_EMAIL, dbService } from './server/db';
-import { generateMediumSudoku } from './src/utils/sudoku';
+import { generateMediumSudoku, getRandomMediumPuzzle } from './src/utils/sudoku';
 
 dotenv.config();
 
@@ -42,7 +42,13 @@ app.get('/api/puzzles/random', (req: Request, res: Response) => {
     const puzzle = dbService.getRandomPuzzle();
     res.json({ success: true, puzzle });
   } catch (err: any) {
-    res.status(500).json({ error: 'Không thể lấy đề bài Sudoku', details: err.message });
+    console.warn('Error in getRandomPuzzle, falling back to curated puzzle:', err);
+    try {
+      const fallback = getRandomMediumPuzzle();
+      res.json({ success: true, puzzle: fallback });
+    } catch (fbErr: any) {
+      res.status(500).json({ error: 'Không thể lấy đề bài Sudoku', details: err.message });
+    }
   }
 });
 
@@ -202,28 +208,51 @@ app.post('/api/music/generate', async (req: Request, res: Response) => {
 // Google OAuth verification endpoint - STRICT: ONLY caobuivan@vccorp.vn
 app.post('/api/auth/google', async (req: Request, res: Response) => {
   try {
-    const { credential } = req.body;
+    const { credential, accessToken } = req.body;
 
-    if (!credential) {
-      res.status(400).json({ error: 'Yêu cầu đăng nhập bằng Google OAuth (thiếu mã token xác thực).' });
+    if (!credential && !accessToken) {
+      res.status(400).json({ error: 'Yêu cầu đăng nhập bằng Google OAuth (thiếu mã xác thực).' });
       return;
     }
 
-    // Real Google Identity Services ID Token verification with Google API
-    const googleVerifyUrl = `https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(credential)}`;
-    const googleRes = await fetch(googleVerifyUrl);
-    if (!googleRes.ok) {
-      res.status(401).json({ error: 'Mã xác thực Google không hợp lệ hoặc đã hết hạn.' });
-      return;
-    }
-    const tokenInfo = await googleRes.json();
-    const email = (tokenInfo.email || '').toLowerCase().trim();
-    const name = tokenInfo.name || 'Cao Bùi Văn (VCCorp)';
-    const picture = tokenInfo.picture || '';
+    let email = '';
+    let name = 'Cao Bùi Văn (VCCorp)';
+    let picture = '';
 
-    if (tokenInfo.email_verified !== 'true' && tokenInfo.email_verified !== true) {
-      res.status(403).json({ error: 'Email Google chưa được xác minh (email_verified is false).' });
-      return;
+    if (accessToken) {
+      const googleRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      if (!googleRes.ok) {
+        res.status(401).json({ error: 'Mã truy cập Google không hợp lệ hoặc đã hết hạn.' });
+        return;
+      }
+      const userInfo = await googleRes.json();
+      email = (userInfo.email || '').toLowerCase().trim();
+      name = userInfo.name || name;
+      picture = userInfo.picture || '';
+
+      if (userInfo.email_verified !== true && userInfo.email_verified !== 'true') {
+        res.status(403).json({ error: 'Email Google chưa được xác minh.' });
+        return;
+      }
+    } else {
+      // Real Google Identity Services ID Token verification with Google API
+      const googleVerifyUrl = `https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(credential)}`;
+      const googleRes = await fetch(googleVerifyUrl);
+      if (!googleRes.ok) {
+        res.status(401).json({ error: 'Mã xác thực Google không hợp lệ hoặc đã hết hạn.' });
+        return;
+      }
+      const tokenInfo = await googleRes.json();
+      email = (tokenInfo.email || '').toLowerCase().trim();
+      name = tokenInfo.name || name;
+      picture = tokenInfo.picture || '';
+
+      if (tokenInfo.email_verified !== 'true' && tokenInfo.email_verified !== true) {
+        res.status(403).json({ error: 'Email Google chưa được xác minh (email_verified is false).' });
+        return;
+      }
     }
 
     // Strict role check: email must be exactly caobuivan@vccorp.vn
