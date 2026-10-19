@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import QRCode from 'qrcode';
 import {
   Save,
   Send,
@@ -24,6 +25,13 @@ import {
   Sparkles,
   ShieldCheck,
   ExternalLink,
+  QrCode,
+  Share2,
+  Download,
+  Upload,
+  RefreshCw,
+  Check,
+  X,
 } from 'lucide-react';
 import {
   AdminUser,
@@ -42,6 +50,10 @@ import {
   logoutAdmin,
   publishAdminDraft,
   saveAdminDraft,
+  uploadSequenceToCloud,
+  generateSyncUrl,
+  getLastSyncKey,
+  saveSyncedSequenceLocally,
 } from '../../services/api';
 import { MessageViewer } from '../messages/MessageViewer';
 import { MusicPlayer } from '../audio/MusicPlayer';
@@ -71,6 +83,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToGame }) 
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [isPublishing, setIsPublishing] = useState<boolean>(false);
   const [statusNotification, setStatusNotification] = useState<{ text: string; type: 'success' | 'error' | 'info' } | null>(null);
+
+  // Sync state
+  const [isSyncModalOpen, setIsSyncModalOpen] = useState<boolean>(false);
+  const [syncKey, setSyncKey] = useState<string>('');
+  const [syncUrl, setSyncUrl] = useState<string>('');
+  const [qrDataUrl, setQrDataUrl] = useState<string>('');
+  const [isGeneratingSync, setIsGeneratingSync] = useState<boolean>(false);
+  const [activeSyncTab, setActiveSyncTab] = useState<'qr' | 'code' | 'json' | 'default'>('qr');
+  const [jsonInput, setJsonInput] = useState<string>('');
+  const [copiedField, setCopiedField] = useState<string | null>(null);
 
   const notify = (text: string, type: 'success' | 'error' | 'info' = 'info') => {
     setStatusNotification({ text, type });
@@ -283,6 +305,72 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToGame }) 
     }
   };
 
+  const copyToClipboard = (text: string, fieldName: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedField(fieldName);
+    setTimeout(() => setCopiedField(null), 2500);
+  };
+
+  const handleOpenSyncModal = async () => {
+    if (!draft) return;
+    setIsGeneratingSync(true);
+    try {
+      const key = await uploadSequenceToCloud(draft);
+      setSyncKey(key);
+      const url = generateSyncUrl(key);
+      setSyncUrl(url);
+      const qr = await QRCode.toDataURL(url, { margin: 2, width: 260 });
+      setQrDataUrl(qr);
+      setIsSyncModalOpen(true);
+    } catch (err: any) {
+      notify('Lỗi tạo mã đồng bộ: ' + (err.message || 'Không thể kết nối'), 'error');
+    } finally {
+      setIsGeneratingSync(false);
+    }
+  };
+
+  const handleImportJson = () => {
+    try {
+      const parsed = JSON.parse(jsonInput);
+      if (!parsed || !Array.isArray(parsed.layers) || parsed.layers.length === 0) {
+        throw new Error('Dữ liệu JSON không chứa danh sách layers hợp lệ');
+      }
+      setDraft(parsed);
+      saveSyncedSequenceLocally(parsed);
+      setHasUnsavedChanges(true);
+      if (parsed.layers.length > 0) {
+        setSelectedLayerId(parsed.layers[0].id);
+      }
+      notify('Đã nhập dữ liệu JSON thành công!', 'success');
+      setJsonInput('');
+    } catch (err: any) {
+      alert('Lỗi nhập JSON: ' + (err.message || 'Cấu trúc không hợp lệ'));
+    }
+  };
+
+  const handleDownloadJson = () => {
+    if (!draft) return;
+    const blob = new Blob([JSON.stringify(draft, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `sudoku_secret_messages_v${draft.version || 1}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleDownloadDefaultTs = () => {
+    if (!draft) return;
+    const content = `import { MessageSequence } from '../types';\n\nexport const INITIAL_SAMPLE_MESSAGES: MessageSequence = ${JSON.stringify(draft, null, 2)};\n`;
+    const blob = new Blob([content], { type: 'text/typescript' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'defaultMessages.ts';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   // Publish draft
   const handlePublish = async () => {
     if (!draft) return;
@@ -299,7 +387,21 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToGame }) 
       const published = await publishAdminDraft();
       setDraft(published);
       setHasUnsavedChanges(false);
-      notify('Đã xuất bản thành công! Người chơi thắng Sudoku sẽ xem được nội dung mới nhất.', 'success');
+
+      // Automatically generate QR and open mobile sync modal
+      try {
+        const key = await uploadSequenceToCloud(published);
+        setSyncKey(key);
+        const url = generateSyncUrl(key);
+        setSyncUrl(url);
+        const qr = await QRCode.toDataURL(url, { margin: 2, width: 260 });
+        setQrDataUrl(qr);
+        setIsSyncModalOpen(true);
+      } catch (err) {
+        console.warn('Auto-generate QR code error:', err);
+      }
+
+      notify('Đã xuất bản thành công! Quét mã QR để đồng bộ sang điện thoại.', 'success');
     } catch (err: any) {
       notify('Lỗi xuất bản: ' + err.message, 'error');
     } finally {
@@ -686,6 +788,17 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToGame }) 
           {/* Action buttons */}
           <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
             <MusicPlayer />
+
+            <button
+              type="button"
+              onClick={handleOpenSyncModal}
+              disabled={isGeneratingSync}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 border border-rose-300 text-xs font-semibold text-rose-900 transition-colors cursor-pointer shadow-2xs disabled:opacity-50"
+              title="Đồng bộ chuỗi lời nhắn sang điện thoại thông qua mã QR hoặc link"
+            >
+              <Smartphone className="w-4 h-4 text-rose-600" />
+              <span>{isGeneratingSync ? 'Đang tạo QR...' : 'Đồng bộ Mobile 📱'}</span>
+            </button>
 
             <button
               type="button"
@@ -1485,6 +1598,284 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToGame }) 
                 previewDevice={previewDevice}
                 onBackToSudoku={() => setIsPreviewModalOpen(false)}
               />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ==========================================
+          MOBILE SYNC & BACKUP MODAL
+          ========================================== */}
+      {isSyncModalOpen && draft && (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-3 sm:p-6 bg-slate-950/85 backdrop-blur-md overflow-y-auto">
+          <div className="bg-white rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl border border-rose-200 text-slate-800 my-auto">
+            {/* Modal Header */}
+            <div className="px-5 py-4 border-b border-rose-100 flex items-center justify-between bg-gradient-to-r from-rose-50 to-pink-50">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-rose-500 text-white flex items-center justify-center shadow-sm shadow-rose-500/30">
+                  <Smartphone className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-slate-900 text-sm sm:text-base">
+                    Đồng Bộ Sang Điện Thoại & Máy Khác
+                  </h3>
+                  <p className="text-[11px] text-slate-500">
+                    Mở camera quét mã QR hoặc gửi link để xem lời nhắn mới nhất
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setIsSyncModalOpen(false)}
+                className="p-1.5 rounded-xl hover:bg-white text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Tabs */}
+            <div className="flex border-b border-slate-100 bg-slate-50 px-2 pt-2 text-xs font-semibold">
+              <button
+                type="button"
+                onClick={() => setActiveSyncTab('qr')}
+                className={`flex-1 py-2 px-3 text-center rounded-t-xl transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                  activeSyncTab === 'qr'
+                    ? 'bg-white text-rose-600 shadow-2xs border-t border-x border-slate-200'
+                    : 'text-slate-500 hover:text-slate-900'
+                }`}
+              >
+                <QrCode className="w-3.5 h-3.5" />
+                <span>Quét mã QR ⚡</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setActiveSyncTab('code')}
+                className={`flex-1 py-2 px-3 text-center rounded-t-xl transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                  activeSyncTab === 'code'
+                    ? 'bg-white text-rose-600 shadow-2xs border-t border-x border-slate-200'
+                    : 'text-slate-500 hover:text-slate-900'
+                }`}
+              >
+                <Share2 className="w-3.5 h-3.5" />
+                <span>Mã đồng bộ</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setActiveSyncTab('json')}
+                className={`flex-1 py-2 px-3 text-center rounded-t-xl transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                  activeSyncTab === 'json'
+                    ? 'bg-white text-rose-600 shadow-2xs border-t border-x border-slate-200'
+                    : 'text-slate-500 hover:text-slate-900'
+                }`}
+              >
+                <Download className="w-3.5 h-3.5" />
+                <span>Sao lưu JSON</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setActiveSyncTab('default')}
+                className={`flex-1 py-2 px-3 text-center rounded-t-xl transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                  activeSyncTab === 'default'
+                    ? 'bg-white text-rose-600 shadow-2xs border-t border-x border-slate-200'
+                    : 'text-slate-500 hover:text-slate-900'
+                }`}
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Mã nguồn</span>
+              </button>
+            </div>
+
+            {/* Tab Body */}
+            <div className="p-5 sm:p-6 space-y-4">
+              {/* TAB 1: QR CODE */}
+              {activeSyncTab === 'qr' && (
+                <div className="flex flex-col items-center text-center space-y-4">
+                  <div className="p-3 bg-white rounded-2xl border-2 border-dashed border-rose-300 shadow-inner flex flex-col items-center">
+                    {qrDataUrl ? (
+                      <img
+                        src={qrDataUrl}
+                        alt="Mã QR đồng bộ"
+                        className="w-52 h-52 sm:w-60 sm:h-60 rounded-xl"
+                      />
+                    ) : (
+                      <div className="w-52 h-52 flex items-center justify-center">
+                        <div className="w-8 h-8 border-3 border-rose-500 border-t-transparent rounded-full animate-spin" />
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="space-y-1">
+                    <p className="text-xs sm:text-sm font-bold text-slate-800">
+                      Mở Camera điện thoại hoặc Zalo để quét mã QR
+                    </p>
+                    <p className="text-xs text-slate-500 max-w-sm">
+                      Trang web sẽ tự động mở trên điện thoại và lưu ngay bộ lời nhắn mới nhất vào máy của bạn!
+                    </p>
+                  </div>
+
+                  {/* Share Link */}
+                  <div className="w-full flex items-center gap-2 p-2 bg-slate-50 rounded-2xl border border-slate-200 text-xs">
+                    <span className="font-mono text-slate-600 truncate flex-1 px-2 text-left">
+                      {syncUrl || 'Đang tạo link...'}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => copyToClipboard(syncUrl, 'url')}
+                      className="px-3 py-1.5 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-semibold transition-colors shrink-0 flex items-center gap-1 cursor-pointer"
+                    >
+                      {copiedField === 'url' ? (
+                        <>
+                          <Check className="w-3.5 h-3.5" />
+                          <span>Đã chép</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-3.5 h-3.5" />
+                          <span>Chép link</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 2: CODE */}
+              {activeSyncTab === 'code' && (
+                <div className="space-y-4 text-center">
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    Nếu bạn đã mở sẵn trang web trên điện thoại, hãy bấm nút <strong>"Đồng bộ"</strong> trên thanh menu điện thoại và nhập mã dưới đây:
+                  </p>
+
+                  <div className="py-4 px-6 bg-slate-100 rounded-2xl border border-slate-200 flex flex-col items-center gap-2">
+                    <span className="text-xs text-slate-400 font-semibold uppercase tracking-wider">
+                      Mã Đồng Bộ (Sync Key)
+                    </span>
+                    <span className="font-mono text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-wider">
+                      {syncKey || '------'}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => copyToClipboard(syncKey, 'code')}
+                      className="mt-1 px-4 py-1.5 rounded-xl bg-white border border-slate-300 hover:bg-slate-50 text-xs font-semibold text-slate-700 flex items-center gap-1.5 transition-colors cursor-pointer shadow-xs"
+                    >
+                      {copiedField === 'code' ? (
+                        <>
+                          <Check className="w-3.5 h-3.5 text-emerald-600" />
+                          <span>Đã sao chép mã</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-3.5 h-3.5" />
+                          <span>Sao chép mã</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+
+                  <div className="p-3 bg-amber-50 rounded-2xl border border-amber-200 text-left text-xs text-amber-800 space-y-1">
+                    <div className="font-bold">Cách sử dụng:</div>
+                    <div>1. Trên điện thoại, vào trang web Sudoku.</div>
+                    <div>2. Bấm nút <strong>"Đồng bộ"</strong> ở thanh tiêu đề phía trên.</div>
+                    <div>3. Dán mã này vào và bấm <strong>"Tải dữ liệu"</strong>.</div>
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 3: JSON BACKUP */}
+              {activeSyncTab === 'json' && (
+                <div className="space-y-4">
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => copyToClipboard(JSON.stringify(draft, null, 2), 'json')}
+                      className="flex-1 py-2 px-3 rounded-xl border border-slate-200 hover:bg-slate-50 text-xs font-semibold text-slate-700 flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                    >
+                      {copiedField === 'json' ? (
+                        <>
+                          <Check className="w-3.5 h-3.5 text-emerald-600" />
+                          <span>Đã chép JSON</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-3.5 h-3.5" />
+                          <span>Chép mã JSON</span>
+                        </>
+                      )}
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={handleDownloadJson}
+                      className="flex-1 py-2 px-3 rounded-xl bg-rose-50 hover:bg-rose-100 border border-rose-200 text-xs font-semibold text-rose-800 flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                    >
+                      <Download className="w-3.5 h-3.5 text-rose-600" />
+                      <span>Tải file .json</span>
+                    </button>
+                  </div>
+
+                  <div className="pt-2 border-t border-slate-100 space-y-2">
+                    <label className="block text-xs font-semibold text-slate-700">
+                      Khôi phục / Nhập từ file JSON:
+                    </label>
+                    <textarea
+                      rows={3}
+                      value={jsonInput}
+                      onChange={e => setJsonInput(e.target.value)}
+                      placeholder="Dán nội dung JSON vào đây để nạp..."
+                      className="w-full p-2.5 rounded-xl border border-slate-200 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-rose-400"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleImportJson}
+                      disabled={!jsonInput.trim()}
+                      className="w-full py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold transition-colors disabled:opacity-40 cursor-pointer"
+                    >
+                      Nạp dữ liệu JSON này
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 4: DEFAULT CODEBASE (VERCEL) */}
+              {activeSyncTab === 'default' && (
+                <div className="space-y-3 text-xs text-slate-600 leading-relaxed">
+                  <p>
+                    Để bộ lời nhắn này trở thành <strong>mặc định vĩnh viễn</strong> cho toàn bộ người chơi truy cập trang web (kể cả người chơi lạ không quét mã QR):
+                  </p>
+
+                  <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+                    <p className="font-semibold text-slate-800">
+                      1. Tải file cấu hình mã nguồn mới nhất:
+                    </p>
+                    <button
+                      type="button"
+                      onClick={handleDownloadDefaultTs}
+                      className="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-semibold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-xs"
+                    >
+                      <Download className="w-4 h-4" />
+                      <span>Tải file `defaultMessages.ts`</span>
+                    </button>
+                    <p className="text-[11px] text-slate-500">
+                      2. Thay thế vào thư mục: <code className="bg-slate-200 px-1 py-0.5 rounded text-slate-800 font-mono">src/utils/defaultMessages.ts</code> trong dự án rồi chạy <code className="bg-slate-200 px-1 py-0.5 rounded text-slate-800 font-mono">git push</code> lên Vercel.
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="px-5 py-3 border-t border-slate-100 bg-slate-50 flex items-center justify-end">
+              <button
+                type="button"
+                onClick={() => setIsSyncModalOpen(false)}
+                className="px-4 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-xs font-semibold text-slate-700 transition-colors cursor-pointer"
+              >
+                Đóng cửa sổ
+              </button>
             </div>
           </div>
         </div>

@@ -85,6 +85,54 @@ export function publishLocalDraftMessages(): MessageSequence {
   return draft;
 }
 
+const CLOUD_RELAY_URL = 'https://bytebin.lucko.me';
+const LAST_SYNC_KEY = 'sudoku_last_sync_key';
+
+export function getLastSyncKey(): string | null {
+  return localStorage.getItem(LAST_SYNC_KEY);
+}
+
+export function saveSyncedSequenceLocally(sequence: MessageSequence): void {
+  const serialized = JSON.stringify(sequence);
+  localStorage.setItem(LOCAL_STORAGE_PUBLISHED_KEY, serialized);
+  localStorage.setItem(LOCAL_STORAGE_DRAFT_KEY, serialized);
+}
+
+export async function uploadSequenceToCloud(sequence: MessageSequence): Promise<string> {
+  const res = await fetch(`${CLOUD_RELAY_URL}/post`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(sequence),
+  });
+  if (!res.ok) {
+    throw new Error('Không thể kết nối đến máy chủ Cloud Relay');
+  }
+  const data = await res.json();
+  if (!data || !data.key) {
+    throw new Error('Máy chủ không trả về mã khóa đồng bộ');
+  }
+  localStorage.setItem(LAST_SYNC_KEY, data.key);
+  return data.key;
+}
+
+export async function fetchSequenceFromCloud(key: string): Promise<MessageSequence> {
+  const cleanKey = key.trim();
+  const res = await fetch(`${CLOUD_RELAY_URL}/${cleanKey}`);
+  if (!res.ok) {
+    throw new Error(`Không tìm thấy dữ liệu đồng bộ cho mã '${cleanKey}'`);
+  }
+  const data = (await res.json()) as MessageSequence;
+  if (!data || !Array.isArray(data.layers) || data.layers.length === 0) {
+    throw new Error('Dữ liệu đồng bộ tải về không đúng cấu trúc');
+  }
+  return data;
+}
+
+export function generateSyncUrl(key: string): string {
+  const origin = window.location.origin;
+  return `${origin}/?sync=${encodeURIComponent(key)}`;
+}
+
 // Safe fetch wrapper that checks if response is valid JSON
 async function safeFetchJson<T>(url: string, init?: RequestInit): Promise<T | null> {
   try {
@@ -396,6 +444,12 @@ export async function saveAdminDraft(draft: MessageSequence): Promise<void> {
 
 export async function publishAdminDraft(): Promise<MessageSequence> {
   const localPublished = publishLocalDraftMessages();
+  try {
+    await uploadSequenceToCloud(localPublished);
+  } catch (e) {
+    console.warn('Could not auto upload to cloud relay:', e);
+  }
+
   const token = getStoredAdminToken();
   if (token) {
     const data = await safeFetchJson<{ success: boolean; published: MessageSequence }>('/api/admin/publish', {
