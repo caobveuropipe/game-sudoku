@@ -10,6 +10,7 @@ import {
   getStoredUnlockToken,
   fetchSequenceFromCloud,
   saveSyncedSequenceLocally,
+  setStoredUnlockToken,
 } from './services/api';
 
 type AppView = 'game' | 'messages' | 'admin';
