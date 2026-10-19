@@ -115,12 +115,12 @@ export default function App() {
 
       {/* Main View Area */}
       <main className="flex-1 flex flex-col relative z-10">
-        {currentView === 'game' && (
+        <div className={currentView === 'game' ? 'block' : 'hidden'}>
           <SudokuGame
             onUnlockMessages={handleUnlockMessages}
             onOpenAdmin={() => setCurrentView('admin')}
           />
-        )}
+        </div>
 
         {currentView === 'messages' && unlockedSequence && (
           <div className="py-6 sm:py-8 flex-1 flex flex-col items-center justify-center">

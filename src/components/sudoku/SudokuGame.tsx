@@ -41,6 +41,7 @@ interface SavedGameState {
   notes: SudokuNotes;
   timeSeconds: number;
   movesCount?: number;
+  hasWon?: boolean;
 }
 
 interface SudokuGameProps {
@@ -92,6 +93,15 @@ export const SudokuGame: React.FC<SudokuGameProps> = ({
           setNotes(parsed.notes || createEmptyNotes());
           setTimerSeconds(parsed.timeSeconds || 0);
           setMovesCount(parsed.movesCount || 0);
+
+          // If game was already completed, mark as won with modal closed!
+          const alreadyWon = Boolean(parsed.hasWon || isBoardCompleteAndValid(parsed.currentBoard));
+          if (alreadyWon) {
+            setHasWonCurrentPuzzle(true);
+            setIsTimerRunning(false);
+            setIsVictoryModalOpen(false);
+            setUnlockedMessages(getLocalPublishedMessages());
+          }
           return;
         }
       } catch (e) {
@@ -121,9 +131,10 @@ export const SudokuGame: React.FC<SudokuGameProps> = ({
       notes,
       timeSeconds: timerSeconds,
       movesCount,
+      hasWon: hasWonCurrentPuzzle,
     };
     localStorage.setItem(LOCAL_STORAGE_GAME_KEY, JSON.stringify(saveState));
-  }, [puzzle, currentBoard, notes, timerSeconds, movesCount]);
+  }, [puzzle, currentBoard, notes, timerSeconds, movesCount, hasWonCurrentPuzzle]);
 
   // Load new puzzle
   const loadNewPuzzle = async () => {
