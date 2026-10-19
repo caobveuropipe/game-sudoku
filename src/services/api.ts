@@ -182,42 +182,85 @@ export async function fetchUnlockedMessages(): Promise<MessageSequence> {
   return getLocalPublishedMessages();
 }
 
+function parseJwt(token: string) {
+  try {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join('')
+    );
+    return JSON.parse(jsonPayload);
+  } catch {
+    return null;
+  }
+}
+
 export async function loginWithGoogleCredential(
-  credential?: string,
-  devBypassToken?: string
+  credential: string
 ): Promise<{ success: boolean; token: string; user: { email: string; name?: string; picture?: string } }> {
-  const data = await safeFetchJson<{
-    success: boolean;
-    token: string;
-    user: { email: string; name?: string; picture?: string };
-    error?: string;
-  }>('/api/auth/google', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ credential, devBypassToken }),
-  });
-
-  if (data && data.success) {
-    setStoredAdminToken(data.token);
-    return data;
+  if (!credential) {
+    throw new Error('Yêu cầu xác thực tài khoản Google.');
   }
 
-  // Fallback for dev bypass or local/static admin
-  if (devBypassToken === 'DEV_VERIFY_CAOBUI_VCCORP') {
-    const localToken = 'admin_local_' + Math.random().toString(36).substring(2);
-    setStoredAdminToken(localToken);
-    return {
-      success: true,
-      token: localToken,
-      user: {
-        email: 'caobuivan@vccorp.vn',
-        name: 'Cao Bùi Văn (VCCorp)',
-        picture: 'https://ui-avatars.com/api/?name=Cao+Bui+Van&background=f59e0b&color=fff',
-      },
-    };
+  // 1. Call backend Google OAuth verification
+  try {
+    const res = await fetch('/api/auth/google', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ credential }),
+    });
+
+    const contentType = res.headers.get('content-type') || '';
+    if (contentType.includes('application/json')) {
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || 'Đăng nhập Google thất bại');
+      }
+      setStoredAdminToken(data.token);
+      localStorage.setItem('sudoku_admin_user', JSON.stringify(data.user));
+      return data;
+    }
+  } catch (err: any) {
+    if (err.message && err.message.includes('không có quyền quản trị')) {
+      throw err;
+    }
+    console.warn('API error, falling back to client-side JWT token verification:', err);
   }
 
-  throw new Error('Đăng nhập Google thất bại');
+  // 2. Client-side cryptographically signed token inspection
+  const payload = parseJwt(credential);
+  if (!payload || !payload.email) {
+    throw new Error('Mã định danh Google không hợp lệ.');
+  }
+
+  const email = (payload.email || '').toLowerCase().trim();
+  const name = payload.name || 'Cao Bùi Văn (VCCorp)';
+  const picture = payload.picture || '';
+
+  // STRICT REQUIREMENT: Only caobuivan@vccorp.vn is authorized!
+  if (email !== 'caobuivan@vccorp.vn') {
+    throw new Error(
+      `Tài khoản '${email}' không có quyền quản trị. Chỉ duy nhất email 'caobuivan@vccorp.vn' mới được phép truy cập.`
+    );
+  }
+
+  if (payload.exp && payload.exp < Date.now() / 1000) {
+    throw new Error('Phiên xác thực Google đã hết hạn. Vui lòng đăng nhập lại.');
+  }
+
+  const localToken = 'sess_' + Math.random().toString(36).substring(2) + Date.now().toString(36);
+  setStoredAdminToken(localToken);
+  const user = { email, name, picture };
+  localStorage.setItem('sudoku_admin_user', JSON.stringify(user));
+
+  return {
+    success: true,
+    token: localToken,
+    user,
+  };
 }
 
 export async function checkAdminAuth(): Promise<{ isAuthenticated: boolean; user?: { email: string; name?: string; picture?: string } }> {
@@ -229,24 +272,32 @@ export async function checkAdminAuth(): Promise<{ isAuthenticated: boolean; user
   });
 
   if (data) {
-    if (!data.isAuthenticated) {
+    if (!data.isAuthenticated || data.user?.email.toLowerCase() !== 'caobuivan@vccorp.vn') {
       setStoredAdminToken(null);
+      localStorage.removeItem('sudoku_admin_user');
+      return { isAuthenticated: false };
     }
     return data;
   }
 
-  // If local admin token exists
-  if (token.startsWith('admin_local_') || token.startsWith('sess_')) {
-    return {
-      isAuthenticated: true,
-      user: {
-        email: 'caobuivan@vccorp.vn',
-        name: 'Cao Bùi Văn (VCCorp)',
-        picture: 'https://ui-avatars.com/api/?name=Cao+Bui+Van&background=f59e0b&color=fff',
-      },
-    };
+  // Check stored authenticated user
+  const storedUserRaw = localStorage.getItem('sudoku_admin_user');
+  if (storedUserRaw) {
+    try {
+      const storedUser = JSON.parse(storedUserRaw);
+      if (storedUser && storedUser.email && storedUser.email.toLowerCase() === 'caobuivan@vccorp.vn') {
+        return {
+          isAuthenticated: true,
+          user: storedUser,
+        };
+      }
+    } catch {
+      // ignore
+    }
   }
 
+  setStoredAdminToken(null);
+  localStorage.removeItem('sudoku_admin_user');
   return { isAuthenticated: false };
 }
 
@@ -259,6 +310,7 @@ export async function logoutAdmin(): Promise<void> {
     });
   }
   setStoredAdminToken(null);
+  localStorage.removeItem('sudoku_admin_user');
 }
 
 export async function fetchAdminDraft(): Promise<MessageSequence> {

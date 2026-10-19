@@ -199,46 +199,37 @@ app.post('/api/music/generate', async (req: Request, res: Response) => {
 // AUTHENTICATION API (GOOGLE OAUTH & ADMIN)
 // ==========================================
 
-// Google OAuth verification endpoint
+// Google OAuth verification endpoint - STRICT: ONLY caobuivan@vccorp.vn
 app.post('/api/auth/google', async (req: Request, res: Response) => {
   try {
-    const { credential, devBypassToken } = req.body;
+    const { credential } = req.body;
 
-    let email = '';
-    let name = 'Quản trị viên';
-    let picture = '';
+    if (!credential) {
+      res.status(400).json({ error: 'Yêu cầu đăng nhập bằng Google OAuth (thiếu mã token xác thực).' });
+      return;
+    }
 
-    if (credential) {
-      // Real Google Identity Services ID Token verification with Google API
-      const googleVerifyUrl = `https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(credential)}`;
-      const googleRes = await fetch(googleVerifyUrl);
-      if (!googleRes.ok) {
-        res.status(401).json({ error: 'Mã xác thực Google không hợp lệ hoặc đã hết hạn.' });
-        return;
-      }
-      const tokenInfo = await googleRes.json();
-      email = (tokenInfo.email || '').toLowerCase().trim();
-      name = tokenInfo.name || name;
-      picture = tokenInfo.picture || '';
+    // Real Google Identity Services ID Token verification with Google API
+    const googleVerifyUrl = `https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(credential)}`;
+    const googleRes = await fetch(googleVerifyUrl);
+    if (!googleRes.ok) {
+      res.status(401).json({ error: 'Mã xác thực Google không hợp lệ hoặc đã hết hạn.' });
+      return;
+    }
+    const tokenInfo = await googleRes.json();
+    const email = (tokenInfo.email || '').toLowerCase().trim();
+    const name = tokenInfo.name || 'Cao Bùi Văn (VCCorp)';
+    const picture = tokenInfo.picture || '';
 
-      if (tokenInfo.email_verified !== 'true' && tokenInfo.email_verified !== true) {
-        res.status(403).json({ error: 'Email Google chưa được xác minh (email_verified is false).' });
-        return;
-      }
-    } else if (devBypassToken && devBypassToken === 'DEV_VERIFY_CAOBUI_VCCORP') {
-      // Safe development/preview fallback when Google Cloud OAuth credentials are being setup
-      email = ADMIN_EMAIL.toLowerCase().trim();
-      name = 'Cao Bùi Văn (VCCorp)';
-      picture = 'https://ui-avatars.com/api/?name=Cao+Bui+Van&background=f59e0b&color=fff';
-    } else {
-      res.status(400).json({ error: 'Thiếu thông tin đăng nhập Google.' });
+    if (tokenInfo.email_verified !== 'true' && tokenInfo.email_verified !== true) {
+      res.status(403).json({ error: 'Email Google chưa được xác minh (email_verified is false).' });
       return;
     }
 
     // Strict role check: email must be exactly caobuivan@vccorp.vn
     if (email !== ADMIN_EMAIL.toLowerCase()) {
       res.status(403).json({
-        error: `Tài khoản '${email}' không có quyền quản trị. Chỉ email '${ADMIN_EMAIL}' được phép truy cập.`,
+        error: `Tài khoản '${email}' không có quyền quản trị. Chỉ duy nhất email '${ADMIN_EMAIL}' được phép truy cập.`,
       });
       return;
     }
