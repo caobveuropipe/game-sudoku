@@ -29,6 +29,7 @@ import {
   generateNewPuzzle,
   verifySudokuAndUnlock,
   getLocalPublishedMessages,
+  setStoredUnlockToken,
 } from '../../services/api';
 import { audioManager } from '../../utils/audio';
 
@@ -46,11 +47,15 @@ interface SavedGameState {
 interface SudokuGameProps {
   onUnlockMessages: (messages: MessageSequence) => void;
   onOpenAdmin: () => void;
+  onResetGame?: () => void;
+  onPuzzleWon?: (messages: MessageSequence) => void;
 }
 
 export const SudokuGame: React.FC<SudokuGameProps> = ({
   onUnlockMessages,
   onOpenAdmin,
+  onResetGame,
+  onPuzzleWon,
 }) => {
   const [puzzle, setPuzzle] = useState<SudokuPuzzle | null>(null);
   const [currentBoard, setCurrentBoard] = useState<number[][]>([]);
@@ -99,7 +104,14 @@ export const SudokuGame: React.FC<SudokuGameProps> = ({
             setHasWonCurrentPuzzle(true);
             setIsTimerRunning(false);
             setIsVictoryModalOpen(false);
-            setUnlockedMessages(getLocalPublishedMessages());
+            const msgs = getLocalPublishedMessages();
+            setUnlockedMessages(msgs);
+            onPuzzleWon?.(msgs);
+          } else {
+            // Unfinished game: hide view message button and clear unlock state
+            setHasWonCurrentPuzzle(false);
+            setUnlockedMessages(null);
+            onResetGame?.();
           }
           return;
         }
@@ -141,6 +153,11 @@ export const SudokuGame: React.FC<SudokuGameProps> = ({
     setSelectedCell(null);
     setHistory([]);
     setErrorCells([]);
+    onResetGame?.(); // Hide "Xem lời nhắn" button!
+    setStoredUnlockToken(null);
+    setHasWonCurrentPuzzle(false);
+    setUnlockedMessages(null);
+    localStorage.removeItem(LOCAL_STORAGE_GAME_KEY);
     try {
       let p: SudokuPuzzle;
       try {
@@ -155,8 +172,6 @@ export const SudokuGame: React.FC<SudokuGameProps> = ({
       setMovesCount(0);
       setIsTimerRunning(true);
       setIsVictoryModalOpen(false);
-      setHasWonCurrentPuzzle(false);
-      setUnlockedMessages(null);
     } catch (err: any) {
       showToast('Không thể tải bàn cờ mới: ' + err.message, 'error');
     } finally {
@@ -170,13 +185,17 @@ export const SudokuGame: React.FC<SudokuGameProps> = ({
     setSelectedCell(null);
     setHistory([]);
     setErrorCells([]);
+    onResetGame?.(); // Hide "Xem lời nhắn" button!
+    setStoredUnlockToken(null);
+    setHasWonCurrentPuzzle(false);
+    setUnlockedMessages(null);
+    localStorage.removeItem(LOCAL_STORAGE_GAME_KEY);
     setCurrentBoard(cloneBoard(puzzle.initial));
     setNotes(createEmptyNotes());
     setTimerSeconds(0);
     setMovesCount(0);
     setIsTimerRunning(true);
     setIsVictoryModalOpen(false);
-    setHasWonCurrentPuzzle(false);
     setIsRestartModalOpen(false);
     showToast('Đã đặt lại ván cờ về trạng thái ban đầu', 'info');
   };
@@ -195,15 +214,20 @@ export const SudokuGame: React.FC<SudokuGameProps> = ({
   // Undo last action
   const handleUndo = useCallback(() => {
     if (history.length === 0) return;
+    if (hasWonCurrentPuzzle) {
+      setHasWonCurrentPuzzle(false);
+      setUnlockedMessages(null);
+      setStoredUnlockToken(null);
+      onResetGame?.();
+    }
     const previous = history[history.length - 1];
     setHistory(prev => prev.slice(0, -1));
     setCurrentBoard(previous.board);
     setNotes(previous.notes);
     setErrorCells([]);
-    setHasWonCurrentPuzzle(false);
     setMovesCount(m => m + 1);
     audioManager.playClick(0.85);
-  }, [history]);
+  }, [history, hasWonCurrentPuzzle, onResetGame]);
 
   // Fill number or candidate
   const handleInputNumber = useCallback(
@@ -214,9 +238,15 @@ export const SudokuGame: React.FC<SudokuGameProps> = ({
       // Cannot modify initial clue cells
       if (puzzle.initial[r][c] !== 0) return;
 
+      if (hasWonCurrentPuzzle) {
+        setHasWonCurrentPuzzle(false);
+        setUnlockedMessages(null);
+        setStoredUnlockToken(null);
+        onResetGame?.();
+      }
+
       pushHistory();
       setErrorCells([]);
-      setHasWonCurrentPuzzle(false);
       setMovesCount(m => m + 1);
       audioManager.playClick(0.95 + num * 0.05);
 
@@ -265,7 +295,7 @@ export const SudokuGame: React.FC<SudokuGameProps> = ({
         });
       }
     },
-    [puzzle, selectedCell, isNoteMode, pushHistory]
+    [puzzle, selectedCell, isNoteMode, pushHistory, hasWonCurrentPuzzle, onResetGame]
   );
 
   // Erase cell content
@@ -275,8 +305,13 @@ export const SudokuGame: React.FC<SudokuGameProps> = ({
     if (puzzle.initial[r][c] !== 0) return;
 
     if (currentBoard[r][c] !== 0 || notes[r][c].length > 0) {
+      if (hasWonCurrentPuzzle) {
+        setHasWonCurrentPuzzle(false);
+        setUnlockedMessages(null);
+        setStoredUnlockToken(null);
+        onResetGame?.();
+      }
       pushHistory();
-      setHasWonCurrentPuzzle(false);
       setCurrentBoard(prev => {
         const next = cloneBoard(prev);
         next[r][c] = 0;
@@ -291,7 +326,7 @@ export const SudokuGame: React.FC<SudokuGameProps> = ({
       setMovesCount(m => m + 1);
       audioManager.playClick(0.7);
     }
-  }, [puzzle, selectedCell, currentBoard, notes, pushHistory]);
+  }, [puzzle, selectedCell, currentBoard, notes, pushHistory, hasWonCurrentPuzzle, onResetGame]);
 
   // Keyboard controls
   useEffect(() => {
@@ -340,6 +375,7 @@ export const SudokuGame: React.FC<SudokuGameProps> = ({
     const immediateMessages = getLocalPublishedMessages();
     setUnlockedMessages(immediateMessages);
     setIsVictoryModalOpen(true);
+    onPuzzleWon?.(immediateMessages);
 
     // Confetti celebration
     try {
@@ -396,6 +432,9 @@ export const SudokuGame: React.FC<SudokuGameProps> = ({
     if (hasEmpty) {
       if (hasWonCurrentPuzzle) {
         setHasWonCurrentPuzzle(false);
+        setUnlockedMessages(null);
+        setStoredUnlockToken(null);
+        onResetGame?.();
       }
       return;
     }
@@ -408,9 +447,12 @@ export const SudokuGame: React.FC<SudokuGameProps> = ({
     } else {
       if (hasWonCurrentPuzzle) {
         setHasWonCurrentPuzzle(false);
+        setUnlockedMessages(null);
+        setStoredUnlockToken(null);
+        onResetGame?.();
       }
     }
-  }, [currentBoard, puzzle, hasWonCurrentPuzzle]);
+  }, [currentBoard, puzzle, hasWonCurrentPuzzle, onResetGame]);
 
   // Verify board completion (manual fallback)
   const handleVerify = async () => {

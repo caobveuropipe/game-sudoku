@@ -23,9 +23,9 @@ export default function App() {
   const [manualSyncKey, setManualSyncKey] = useState<string>('');
   const [isSyncing, setIsSyncing] = useState<boolean>(false);
 
-  // Check if player has already unlocked messages in previous session or via URL sync
+  // Do NOT pre-unlock on load. Player must solve and win the current game!
   useEffect(() => {
-    // 1. Check for sync parameter in URL (?sync=KEY or #sync=KEY)
+    // Check for sync parameter in URL (?sync=KEY or #sync=KEY)
     const urlParams = new URLSearchParams(window.location.search);
     const querySync = urlParams.get('sync');
     let hashSync = '';
@@ -39,7 +39,6 @@ export default function App() {
       fetchSequenceFromCloud(syncKey)
         .then(syncedSeq => {
           saveSyncedSequenceLocally(syncedSeq);
-          setUnlockedSequence(syncedSeq);
           setSyncNotification({
             text: '🎉 Đã đồng bộ thành công chuỗi lời nhắn mới nhất vào máy của bạn!',
             type: 'success',
@@ -58,22 +57,21 @@ export default function App() {
           setTimeout(() => setSyncNotification(null), 5000);
         });
     }
-
-    // 2. Load existing unlocked token if present
-    const token = getStoredUnlockToken();
-    if (token) {
-      fetchUnlockedMessages()
-        .then(seq => {
-          if (seq && seq.layers && seq.layers.length > 0) {
-            setUnlockedSequence(seq);
-            setHasUnlockedOnce(true);
-          }
-        })
-        .catch(() => {
-          // Token expired or invalid, keep game view
-        });
-    }
   }, []);
+
+  const handleResetGame = () => {
+    setHasUnlockedOnce(false);
+    setUnlockedSequence(null);
+    setStoredUnlockToken(null);
+    if (currentView === 'messages') {
+      setCurrentView('game');
+    }
+  };
+
+  const handlePuzzleWon = (sequence: MessageSequence) => {
+    setUnlockedSequence(sequence);
+    setHasUnlockedOnce(true);
+  };
 
   const handleManualSync = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -271,6 +269,8 @@ export default function App() {
           <SudokuGame
             onUnlockMessages={handleUnlockMessages}
             onOpenAdmin={() => setCurrentView('admin')}
+            onResetGame={handleResetGame}
+            onPuzzleWon={handlePuzzleWon}
           />
         </div>
 
