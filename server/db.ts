@@ -30,32 +30,42 @@ function getDbFilePath(): string {
 
 function ensureDb(): DatabaseSchema {
   if (memoryDb) return memoryDb;
-  const targetFile = getDbFilePath();
 
-  // Try reading existing DB file from process.cwd() or target
-  for (const f of [targetFile, DB_FILE]) {
-    if (fs.existsSync(f)) {
-      try {
-        const raw = fs.readFileSync(f, 'utf-8');
-        memoryDb = JSON.parse(raw) as DatabaseSchema;
-        return memoryDb;
-      } catch (e) {
-        console.warn('Error reading db file from', f, e);
+  try {
+    const targetFile = getDbFilePath();
+    for (const f of [targetFile, DB_FILE]) {
+      if (f && fs.existsSync(f)) {
+        try {
+          const raw = fs.readFileSync(f, 'utf-8');
+          const parsed = JSON.parse(raw) as DatabaseSchema;
+          if (parsed && Array.isArray(parsed.puzzles) && parsed.puzzles.length > 0) {
+            memoryDb = parsed;
+            return memoryDb;
+          }
+        } catch (e) {
+          console.warn('Error reading db file from', f, e);
+        }
       }
     }
+  } catch (err) {
+    console.warn('Filesystem access failed, falling back to memory DB:', err);
   }
 
   const defaultDb: DatabaseSchema = {
     adminEmail: ADMIN_EMAIL,
     sessions: {},
-    puzzles: CURATED_MEDIUM_PUZZLES,
+    puzzles: CURATED_MEDIUM_PUZZLES || [],
     draftMessages: JSON.parse(JSON.stringify(INITIAL_SAMPLE_MESSAGES)),
     publishedMessages: JSON.parse(JSON.stringify(INITIAL_SAMPLE_MESSAGES)),
     unlockTokens: {},
   };
 
   memoryDb = defaultDb;
-  saveDb(defaultDb);
+  try {
+    saveDb(defaultDb);
+  } catch {
+    // ignore
+  }
   return defaultDb;
 }
 
@@ -63,6 +73,7 @@ function saveDb(data: DatabaseSchema): void {
   memoryDb = data;
   try {
     const targetFile = getDbFilePath();
+    if (!targetFile) return;
     const dir = path.dirname(targetFile);
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
