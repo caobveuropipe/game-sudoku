@@ -65,6 +65,7 @@ export const SudokuGame: React.FC<SudokuGameProps> = ({
   const [toastMessage, setToastMessage] = useState<{ text: string; type: 'success' | 'error' | 'info' } | null>(null);
   const [isVerifying, setIsVerifying] = useState<boolean>(false);
   const [isVictoryModalOpen, setIsVictoryModalOpen] = useState<boolean>(false);
+  const [hasWonCurrentPuzzle, setHasWonCurrentPuzzle] = useState<boolean>(false);
   const [unlockedMessages, setUnlockedMessages] = useState<MessageSequence | null>(null);
   const [isRestartModalOpen, setIsRestartModalOpen] = useState<boolean>(false);
   const [isLoadingPuzzle, setIsLoadingPuzzle] = useState<boolean>(false);
@@ -144,6 +145,7 @@ export const SudokuGame: React.FC<SudokuGameProps> = ({
       setMovesCount(0);
       setIsTimerRunning(true);
       setIsVictoryModalOpen(false);
+      setHasWonCurrentPuzzle(false);
       setUnlockedMessages(null);
     } catch (err: any) {
       showToast('Không thể tải bàn cờ mới: ' + err.message, 'error');
@@ -163,6 +165,8 @@ export const SudokuGame: React.FC<SudokuGameProps> = ({
     setTimerSeconds(0);
     setMovesCount(0);
     setIsTimerRunning(true);
+    setIsVictoryModalOpen(false);
+    setHasWonCurrentPuzzle(false);
     setIsRestartModalOpen(false);
     showToast('Đã đặt lại ván cờ về trạng thái ban đầu', 'info');
   };
@@ -313,12 +317,13 @@ export const SudokuGame: React.FC<SudokuGameProps> = ({
 
   // Immediately celebrate and show victory modal without waiting
   const triggerVictory = async (boardToVerify: number[][]) => {
-    if (!puzzle || isVictoryModalOpen) return;
+    if (!puzzle) return;
+    setHasWonCurrentPuzzle(true);
     setIsTimerRunning(false);
     setErrorCells([]);
     audioManager.playVictoryFanfare();
 
-    // Immediately load unlocked messages and open victory modal without requiring any button click!
+    // Immediately load unlocked messages and open victory modal
     const immediateMessages = getLocalPublishedMessages();
     setUnlockedMessages(immediateMessages);
     setIsVictoryModalOpen(true);
@@ -359,9 +364,9 @@ export const SudokuGame: React.FC<SudokuGameProps> = ({
     }
   };
 
-  // Automatically trigger victory when all cells are filled and valid
+  // Automatically trigger victory ONCE when all cells are filled and valid
   useEffect(() => {
-    if (!puzzle || isVictoryModalOpen || currentBoard.length === 0) return;
+    if (!puzzle || hasWonCurrentPuzzle || currentBoard.length === 0) return;
 
     for (let r = 0; r < 9; r++) {
       for (let c = 0; c < 9; c++) {
@@ -372,7 +377,7 @@ export const SudokuGame: React.FC<SudokuGameProps> = ({
     if (isBoardCompleteAndValid(currentBoard)) {
       triggerVictory(currentBoard);
     }
-  }, [currentBoard, puzzle, isVictoryModalOpen]);
+  }, [currentBoard, puzzle, hasWonCurrentPuzzle]);
 
   // Verify board completion (manual fallback)
   const handleVerify = async () => {
@@ -647,36 +652,76 @@ export const SudokuGame: React.FC<SudokuGameProps> = ({
               })}
             </div>
 
-            {/* Check / Verify Button */}
-            <button
-              type="button"
-              onClick={handleVerify}
-              disabled={isVerifying}
-              className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 active:scale-98 text-white font-semibold shadow-md shadow-rose-500/25 flex items-center justify-center gap-2 transition-all cursor-pointer"
-            >
-              {isVerifying ? (
-                <>
-                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  <span>Đang kiểm tra...</span>
-                </>
-              ) : (
-                <>
-                  <CheckCircle2 className="w-5 h-5" />
-                  <span>Kiểm Tra Lời Giải</span>
-                </>
-              )}
-            </button>
+            {/* Action Buttons: Switch smoothly between Gameplay mode and Won mode */}
+            {hasWonCurrentPuzzle ? (
+              <div className="flex flex-col gap-2.5">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (unlockedMessages) {
+                      onUnlockMessages(unlockedMessages);
+                    } else {
+                      setIsVictoryModalOpen(true);
+                    }
+                  }}
+                  className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 active:scale-98 text-white font-bold shadow-md shadow-rose-500/25 flex items-center justify-center gap-2 transition-all cursor-pointer"
+                >
+                  <Eye className="w-5 h-5" />
+                  <span>Xem Lời Nhắn Bí Mật ✨</span>
+                </button>
 
-            {/* Quick Solve Helper for Dev Testing */}
-            <button
-              type="button"
-              onClick={handleDevQuickSolve}
-              className="w-full mt-2 py-2 px-3 rounded-xl border border-dashed border-rose-300 hover:border-rose-400 bg-rose-50/60 hover:bg-rose-100/70 text-rose-700 hover:text-rose-900 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-98"
-              title="Dành cho kiểm thử cục bộ: Tự động điền đầy đủ đáp án chính xác để kiểm tra luồng chiến thắng & mở thư"
-            >
-              <Wand2 className="w-3.5 h-3.5 text-rose-500" />
-              <span>⚡ Điền nhanh đáp án (Test Mode)</span>
-            </button>
+                <button
+                  type="button"
+                  onClick={() => setIsVictoryModalOpen(true)}
+                  className="w-full py-2.5 px-4 rounded-xl border border-rose-200 bg-rose-50/80 hover:bg-rose-100 text-rose-800 font-semibold text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                >
+                  <Trophy className="w-4 h-4 text-rose-500" />
+                  <span>Mở lại bảng mừng chiến thắng 🏆</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setIsRestartModalOpen(true)}
+                  className="w-full py-2 px-3 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-600 text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                >
+                  <RotateCcw className="w-3.5 h-3.5 text-slate-500" />
+                  <span>Chơi lại hoặc đổi ván mới</span>
+                </button>
+              </div>
+            ) : (
+              <>
+                {/* Check / Verify Button */}
+                <button
+                  type="button"
+                  onClick={handleVerify}
+                  disabled={isVerifying}
+                  className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 active:scale-98 text-white font-semibold shadow-md shadow-rose-500/25 flex items-center justify-center gap-2 transition-all cursor-pointer"
+                >
+                  {isVerifying ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      <span>Đang kiểm tra...</span>
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle2 className="w-5 h-5" />
+                      <span>Kiểm Tra Lời Giải</span>
+                    </>
+                  )}
+                </button>
+
+                {/* Quick Solve Helper for Dev Testing */}
+                <button
+                  type="button"
+                  onClick={handleDevQuickSolve}
+                  className="w-full mt-2 py-2 px-3 rounded-xl border border-dashed border-rose-300 hover:border-rose-400 bg-rose-50/60 hover:bg-rose-100/70 text-rose-700 hover:text-rose-900 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-98"
+                  title="Dành cho kiểm thử cục bộ: Tự động điền đầy đủ đáp án chính xác để kiểm tra luồng chiến thắng & mở thư"
+                >
+                  <Wand2 className="w-3.5 h-3.5 text-rose-500" />
+                  <span>⚡ Điền nhanh đáp án (Test Mode)</span>
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>
