@@ -242,9 +242,7 @@ export async function loginWithGoogleCredential(
 
   // STRICT REQUIREMENT: Only caobuivan@vccorp.vn is authorized!
   if (email !== 'caobuivan@vccorp.vn') {
-    throw new Error(
-      `Tài khoản '${email}' không có quyền quản trị. Chỉ duy nhất email 'caobuivan@vccorp.vn' mới được phép truy cập.`
-    );
+    throw new Error(`Tài khoản '${email}' không có quyền quản trị.`);
   }
 
   if (payload.exp && payload.exp < Date.now() / 1000) {
@@ -284,9 +282,7 @@ export async function loginWithGoogleAccessToken(
 
   // Strict check
   if (email !== 'caobuivan@vccorp.vn') {
-    throw new Error(
-      `Tài khoản '${email}' không có quyền quản trị. Chỉ duy nhất email 'caobuivan@vccorp.vn' mới được phép truy cập.`
-    );
+    throw new Error(`Tài khoản '${email}' không có quyền quản trị.`);
   }
 
   // 2. Call backend to create valid session

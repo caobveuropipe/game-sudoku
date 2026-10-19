@@ -117,9 +117,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToGame }) 
       const res = await loginWithGoogleCredential(credential);
       if (res.success && res.user) {
         if (res.user.email.toLowerCase().trim() !== 'caobuivan@vccorp.vn') {
-          throw new Error(
-            `Tài khoản '${res.user.email}' không có quyền quản trị. Chỉ duy nhất email 'caobuivan@vccorp.vn' được phép truy cập.`
-          );
+          throw new Error(`Tài khoản '${res.user.email}' không có quyền quản trị.`);
         }
         setCurrentUser(res.user);
         await loadDraftData();
@@ -153,9 +151,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToGame }) 
                 const res = await loginWithGoogleAccessToken(tokenResponse.access_token);
                 if (res.success && res.user) {
                   if (res.user.email.toLowerCase().trim() !== 'caobuivan@vccorp.vn') {
-                    throw new Error(
-                      `Tài khoản '${res.user.email}' không có quyền quản trị. Chỉ duy nhất email 'caobuivan@vccorp.vn' được phép truy cập.`
-                    );
+                    throw new Error(`Tài khoản '${res.user.email}' không có quyền quản trị.`);
                   }
                   setCurrentUser(res.user);
                   await loadDraftData();

@@ -94,7 +94,7 @@ export default function App() {
                 type="button"
                 onClick={() => setCurrentView('admin')}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/80 hover:bg-white text-rose-950 text-xs font-medium transition-colors cursor-pointer border border-rose-200/70 shadow-2xs"
-                title="Quản trị viên: caobuivan@vccorp.vn"
+                title="Quản trị viên"
               >
                 <Shield className="w-3.5 h-3.5 text-rose-500" />
                 <span className="hidden sm:inline">Quản trị</span>

@@ -258,7 +258,7 @@ app.post('/api/auth/google', async (req: Request, res: Response) => {
     // Strict role check: email must be exactly caobuivan@vccorp.vn
     if (email !== ADMIN_EMAIL.toLowerCase()) {
       res.status(403).json({
-        error: `Tài khoản '${email}' không có quyền quản trị. Chỉ duy nhất email '${ADMIN_EMAIL}' được phép truy cập.`,
+        error: `Tài khoản '${email}' không có quyền quản trị.`,
       });
       return;
     }
