@@ -201,6 +201,7 @@ export const SudokuGame: React.FC<SudokuGameProps> = ({
     setCurrentBoard(previous.board);
     setNotes(previous.notes);
     setErrorCells([]);
+    setHasWonCurrentPuzzle(false);
     setMovesCount(m => m + 1);
     audioManager.playClick(0.85);
   }, [history]);
@@ -216,6 +217,7 @@ export const SudokuGame: React.FC<SudokuGameProps> = ({
 
       pushHistory();
       setErrorCells([]);
+      setHasWonCurrentPuzzle(false);
       setMovesCount(m => m + 1);
       audioManager.playClick(0.95 + num * 0.05);
 
@@ -275,6 +277,7 @@ export const SudokuGame: React.FC<SudokuGameProps> = ({
 
     if (currentBoard[r][c] !== 0 || notes[r][c].length > 0) {
       pushHistory();
+      setHasWonCurrentPuzzle(false);
       setCurrentBoard(prev => {
         const next = cloneBoard(prev);
         next[r][c] = 0;
@@ -375,18 +378,38 @@ export const SudokuGame: React.FC<SudokuGameProps> = ({
     }
   };
 
-  // Automatically trigger victory ONCE when all cells are filled and valid
+  // Automatically trigger victory whenever the board reaches winning state
   useEffect(() => {
-    if (!puzzle || hasWonCurrentPuzzle || currentBoard.length === 0) return;
+    if (!puzzle || currentBoard.length === 0) return;
 
+    let hasEmpty = false;
     for (let r = 0; r < 9; r++) {
       for (let c = 0; c < 9; c++) {
-        if (currentBoard[r][c] === 0) return;
+        if (currentBoard[r][c] === 0) {
+          hasEmpty = true;
+          break;
+        }
       }
+      if (hasEmpty) break;
     }
 
+    // If board has empty cells, user is editing/unsolved -> reset won flag
+    if (hasEmpty) {
+      if (hasWonCurrentPuzzle) {
+        setHasWonCurrentPuzzle(false);
+      }
+      return;
+    }
+
+    // If board is fully filled, check validity
     if (isBoardCompleteAndValid(currentBoard)) {
-      triggerVictory(currentBoard);
+      if (!hasWonCurrentPuzzle) {
+        triggerVictory(currentBoard);
+      }
+    } else {
+      if (hasWonCurrentPuzzle) {
+        setHasWonCurrentPuzzle(false);
+      }
     }
   }, [currentBoard, puzzle, hasWonCurrentPuzzle]);
 
