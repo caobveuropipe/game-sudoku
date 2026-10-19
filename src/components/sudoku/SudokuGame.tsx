@@ -13,7 +13,6 @@ import {
   Shuffle,
   HelpCircle,
   Eye,
-  Wand2,
 } from 'lucide-react';
 import { MessageSequence, SudokuNotes, SudokuPuzzle } from '../../types';
 import {
@@ -742,17 +741,6 @@ export const SudokuGame: React.FC<SudokuGameProps> = ({
                       <span>Kiểm Tra Lời Giải</span>
                     </>
                   )}
-                </button>
-
-                {/* Quick Solve Helper for Dev Testing */}
-                <button
-                  type="button"
-                  onClick={handleDevQuickSolve}
-                  className="w-full mt-2 py-2 px-3 rounded-xl border border-dashed border-rose-300 hover:border-rose-400 bg-rose-50/60 hover:bg-rose-100/70 text-rose-700 hover:text-rose-900 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-98"
-                  title="Dành cho kiểm thử cục bộ: Tự động điền đầy đủ đáp án chính xác để kiểm tra luồng chiến thắng & mở thư"
-                >
-                  <Wand2 className="w-3.5 h-3.5 text-rose-500" />
-                  <span>⚡ Điền nhanh đáp án (Test Mode)</span>
                 </button>
               </>
             )}
