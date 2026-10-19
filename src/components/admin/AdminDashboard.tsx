@@ -44,6 +44,7 @@ import {
   saveAdminDraft,
 } from '../../services/api';
 import { MessageViewer } from '../messages/MessageViewer';
+import { MusicPlayer } from '../audio/MusicPlayer';
 
 interface AdminDashboardProps {
   onBackToGame: () => void;
@@ -649,13 +650,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToGame }) 
       )}
 
       {/* Top Admin Header */}
-      <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-stone-200 px-4 sm:px-6 py-3">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+      <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-stone-200 px-3 sm:px-6 py-2.5">
+        <div className="max-w-[1680px] w-full mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-start">
             <button
               type="button"
               onClick={onBackToGame}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-stone-200 hover:bg-stone-50 text-xs font-medium text-stone-700 transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-stone-200 hover:bg-stone-50 text-xs font-semibold text-stone-700 transition-colors cursor-pointer shadow-2xs"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>Về trò chơi</span>
@@ -684,10 +685,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToGame }) 
 
           {/* Action buttons */}
           <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+            <MusicPlayer />
+
             <button
               type="button"
               onClick={() => setIsPreviewModalOpen(true)}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-stone-200 hover:bg-stone-100 text-xs font-semibold text-stone-700 transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-stone-200 hover:bg-stone-100 text-xs font-semibold text-stone-700 transition-colors cursor-pointer shadow-2xs"
             >
               <Eye className="w-4 h-4 text-stone-500" />
               <span>Xem trước</span>
@@ -745,12 +748,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToGame }) 
       )}
 
       {/* Main 2-column or 3-column builder layout */}
-      <main className="max-w-7xl mx-auto px-4 mt-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <main className="max-w-[1680px] w-full mx-auto px-3 sm:px-6 mt-4 grid grid-cols-1 lg:grid-cols-12 gap-5">
         {/* ==========================================
             LEFT PANEL: LAYER LIST & REORDERING
             ========================================== */}
         <div className="lg:col-span-4 xl:col-span-3 flex flex-col gap-4">
-          <div className="bg-white rounded-2xl border border-stone-200 p-4 shadow-xs">
+          <div className="bg-white rounded-2xl border border-stone-200 p-4 shadow-xs lg:sticky lg:top-16 lg:max-h-[calc(100vh-80px)] lg:overflow-y-auto">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-1.5">
                 <span className="font-bold text-slate-800 text-sm">Danh Sách Màn</span>
@@ -990,8 +993,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToGame }) 
 
               {/* Visual Interactive Canvas */}
               <div
-                className={`mx-auto w-full transition-all border border-stone-200 rounded-2xl bg-stone-50/50 p-4 sm:p-6 ${
-                  previewDevice === 'mobile' ? 'max-w-[400px]' : 'max-w-2xl'
+                className={`mx-auto w-full transition-all border border-stone-200 rounded-2xl bg-stone-50/50 p-3 sm:p-5 ${
+                  previewDevice === 'mobile' ? 'max-w-[400px]' : 'max-w-4xl'
                 }`}
               >
                 <div className="flex flex-col gap-4">
@@ -1424,54 +1427,58 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToGame }) 
           FULL INTERACTIVE PREVIEW MODAL
           ========================================== */}
       {isPreviewModalOpen && draft && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-md p-4">
-          <div className="bg-white rounded-3xl max-w-3xl w-full max-h-[92vh] flex flex-col overflow-hidden shadow-2xl border border-amber-200">
+        <div className="fixed inset-0 z-[100] flex flex-col items-center justify-start p-2 sm:p-4 bg-slate-950/85 backdrop-blur-md overflow-hidden">
+          <div className="bg-white rounded-2xl sm:rounded-3xl max-w-4xl w-full h-[95vh] flex flex-col overflow-hidden shadow-2xl border border-amber-300">
             {/* Modal header */}
-            <div className="px-6 py-4 border-b border-stone-200 flex items-center justify-between bg-stone-50">
+            <div className="px-4 sm:px-6 py-2.5 border-b border-stone-200 flex items-center justify-between bg-stone-50 shrink-0">
               <div className="flex items-center gap-2">
-                <Eye className="w-5 h-5 text-amber-600" />
-                <span className="font-bold text-slate-800 text-base">
-                  Chế Độ Xem Trước Trải Nghiệm Người Chơi
+                <div className="w-7 h-7 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
+                  <Eye className="w-4 h-4" />
+                </div>
+                <span className="font-bold text-slate-800 text-xs sm:text-sm">
+                  Xem Trước Trải Nghiệm Người Chơi
                 </span>
-                <span className="text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 font-semibold">
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 font-semibold hidden sm:inline">
                   Bản Nháp
                 </span>
               </div>
 
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 sm:gap-3">
                 <div className="inline-flex rounded-lg border border-stone-200 p-0.5 bg-stone-200/60">
                   <button
                     type="button"
                     onClick={() => setPreviewDevice('desktop')}
-                    className={`px-2.5 py-1 rounded text-xs font-semibold transition-colors ${
-                      previewDevice === 'desktop' ? 'bg-white shadow-xs text-amber-700' : 'text-stone-600'
+                    className={`px-3 py-1 rounded-md text-xs font-semibold transition-colors flex items-center gap-1 ${
+                      previewDevice === 'desktop' ? 'bg-white shadow-xs text-amber-700' : 'text-stone-600 hover:text-stone-900'
                     }`}
                   >
-                    Máy tính
+                    <Monitor className="w-3.5 h-3.5" />
+                    <span className="hidden sm:inline">Máy tính</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => setPreviewDevice('mobile')}
-                    className={`px-2.5 py-1 rounded text-xs font-semibold transition-colors ${
-                      previewDevice === 'mobile' ? 'bg-white shadow-xs text-amber-700' : 'text-stone-600'
+                    className={`px-3 py-1 rounded-md text-xs font-semibold transition-colors flex items-center gap-1 ${
+                      previewDevice === 'mobile' ? 'bg-white shadow-xs text-amber-700' : 'text-stone-600 hover:text-stone-900'
                     }`}
                   >
-                    Điện thoại
+                    <Smartphone className="w-3.5 h-3.5" />
+                    <span className="hidden sm:inline">Điện thoại</span>
                   </button>
                 </div>
 
                 <button
                   type="button"
                   onClick={() => setIsPreviewModalOpen(false)}
-                  className="px-3 py-1.5 rounded-lg border border-stone-200 hover:bg-stone-200 text-xs font-semibold text-stone-700 transition-colors"
+                  className="px-3 py-1 rounded-lg bg-stone-200/80 hover:bg-stone-300 text-xs font-semibold text-stone-700 transition-colors cursor-pointer"
                 >
-                  Đóng xem trước
+                  ✕ Đóng
                 </button>
               </div>
             </div>
 
             {/* Modal body */}
-            <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-stone-100 flex items-center justify-center">
+            <div className="flex-1 overflow-y-auto p-2 sm:p-4 bg-stone-100/70 flex items-start justify-center">
               <MessageViewer
                 sequence={draft}
                 isPreview={true}

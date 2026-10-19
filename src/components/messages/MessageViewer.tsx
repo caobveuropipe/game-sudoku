@@ -150,17 +150,17 @@ export const MessageViewer: React.FC<MessageViewerProps> = ({
     <div
       className={`w-full mx-auto transition-all ${
         previewDevice === 'mobile'
-          ? 'max-w-[390px] border-4 border-slate-700 rounded-[38px] p-2 bg-slate-900 shadow-2xl my-4'
-          : 'max-w-2xl px-3 sm:px-6 py-6'
+          ? 'max-w-[390px] border-4 border-slate-700 rounded-[38px] p-2 bg-slate-900 shadow-2xl my-2'
+          : 'max-w-2xl w-full px-2 sm:px-4 py-2'
       }`}
     >
       <div
-        className={`w-full rounded-3xl bg-white shadow-sm border border-stone-200 overflow-hidden relative flex flex-col ${
-          previewDevice === 'mobile' ? 'min-h-[580px] max-h-[720px] rounded-[30px]' : 'min-h-[480px]'
+        className={`w-full rounded-2xl sm:rounded-3xl bg-white shadow-sm border border-stone-200 overflow-hidden relative flex flex-col ${
+          previewDevice === 'mobile' ? 'min-h-[560px] max-h-[700px] rounded-[30px]' : 'min-h-[420px]'
         }`}
       >
         {/* Navigation & Progress Bar */}
-        <div className="px-5 py-4 border-b border-stone-100 bg-stone-50/60 flex items-center justify-between">
+        <div className="px-4 py-3 border-b border-stone-100 bg-stone-50/70 flex items-center justify-between">
           <div className="flex items-center gap-2">
             {historyTrail.length > 0 || currentLayerIndex > 0 ? (
               <button
@@ -204,7 +204,7 @@ export const MessageViewer: React.FC<MessageViewerProps> = ({
         </div>
 
         {/* Content Area */}
-        <div className="flex-1 p-5 sm:p-8 flex flex-col justify-between overflow-y-auto">
+        <div className="flex-1 p-3.5 sm:p-5 flex flex-col justify-between overflow-y-auto">
           <AnimatePresence mode="wait">
             {!isCompleted && currentLayer ? (
               <motion.div
@@ -213,9 +213,9 @@ export const MessageViewer: React.FC<MessageViewerProps> = ({
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -12, scale: 0.98 }}
                 transition={{ duration: 0.25, ease: 'easeOut' }}
-                className={`w-full rounded-2xl bg-gradient-to-b p-5 sm:p-7 border ${getThemeClasses(
+                className={`w-full rounded-xl sm:rounded-2xl bg-gradient-to-b p-4 sm:p-5 border ${getThemeClasses(
                   currentLayer.theme
-                )} flex flex-col gap-4 shadow-xs`}
+                )} flex flex-col gap-3 shadow-xs`}
               >
                 {/* Render Layer Components */}
                 {currentLayer.components.map(comp => {
@@ -224,12 +224,12 @@ export const MessageViewer: React.FC<MessageViewerProps> = ({
                       const props = comp.titleProps || { text: 'Tiêu đề', align: 'center', fontSize: 'lg' };
                       const sizeClass =
                         props.fontSize === 'xl'
-                          ? 'text-2xl sm:text-3xl'
-                          : props.fontSize === 'lg'
                           ? 'text-xl sm:text-2xl'
-                          : props.fontSize === 'md'
+                          : props.fontSize === 'lg'
                           ? 'text-lg sm:text-xl'
-                          : 'text-base sm:text-lg';
+                          : props.fontSize === 'md'
+                          ? 'text-base sm:text-lg'
+                          : 'text-sm sm:text-base';
                       const alignClass =
                         props.align === 'left' ? 'text-left' : props.align === 'right' ? 'text-right' : 'text-center';
 
@@ -251,13 +251,13 @@ export const MessageViewer: React.FC<MessageViewerProps> = ({
                         props.style === 'italic'
                           ? 'italic text-stone-600'
                           : props.style === 'quote'
-                          ? 'border-l-4 border-amber-400 pl-4 italic text-stone-700 my-2'
+                          ? 'border-l-4 border-amber-400 pl-4 italic text-stone-700 my-1.5'
                           : 'text-stone-800';
 
                       return (
                         <p
                           key={comp.id}
-                          className={`text-sm sm:text-base leading-relaxed ${alignClass} ${styleClass} whitespace-pre-wrap`}
+                          className={`text-xs sm:text-sm leading-relaxed ${alignClass} ${styleClass} whitespace-pre-wrap`}
                         >
                           {props.text}
                         </p>
@@ -268,12 +268,12 @@ export const MessageViewer: React.FC<MessageViewerProps> = ({
                       const props = comp.imageProps;
                       if (!props?.url) return null;
                       return (
-                        <div key={comp.id} className="w-full flex flex-col items-center my-1">
-                          <div className="w-full max-w-md max-h-64 sm:max-h-80 overflow-hidden rounded-2xl shadow-sm border border-black/5 bg-stone-100 flex items-center justify-center">
+                        <div key={comp.id} className="w-full flex flex-col items-center my-0.5">
+                          <div className="w-full max-w-sm sm:max-w-md max-h-48 sm:max-h-56 overflow-hidden rounded-xl shadow-xs border border-black/5 bg-stone-100 flex items-center justify-center">
                             <img
                               src={props.url}
                               alt={props.alt || 'Hình ảnh lời nhắn'}
-                              className="w-full h-full object-cover transition-transform duration-500 hover:scale-102"
+                              className="w-full h-full max-h-48 sm:max-h-56 object-cover transition-transform duration-500 hover:scale-102"
                               onError={e => {
                                 // Graceful fallback
                                 (e.target as HTMLElement).style.display = 'none';
@@ -281,7 +281,7 @@ export const MessageViewer: React.FC<MessageViewerProps> = ({
                             />
                           </div>
                           {props.caption && (
-                            <span className="text-[11px] text-stone-500 mt-1.5 italic text-center">
+                            <span className="text-[11px] text-stone-500 mt-1 italic text-center">
                               {props.caption}
                             </span>
                           )}
@@ -366,7 +366,7 @@ export const MessageViewer: React.FC<MessageViewerProps> = ({
                     <button
                       type="button"
                       onClick={handleNext}
-                      className="w-full sm:w-auto min-w-[200px] py-3.5 px-6 rounded-xl bg-amber-600 hover:bg-amber-700 active:scale-98 text-white font-semibold text-sm shadow-md shadow-amber-600/20 flex items-center justify-center gap-2 transition-all cursor-pointer"
+                      className="w-full sm:w-auto min-w-[180px] py-2.5 px-5 rounded-xl bg-amber-600 hover:bg-amber-700 active:scale-98 text-white font-semibold text-xs sm:text-sm shadow-sm flex items-center justify-center gap-2 transition-all cursor-pointer"
                     >
                       <span>Xem tiếp</span>
                       <ArrowRight className="w-4 h-4" />

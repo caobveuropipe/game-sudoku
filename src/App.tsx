@@ -47,49 +47,50 @@ export default function App() {
       <div className="fixed inset-0 pointer-events-none z-0 bg-gradient-to-b from-rose-50/70 via-pink-50/40 to-rose-100/50" />
 
       {/* Top Application Header */}
-      <header className="bg-white/80 backdrop-blur-md border-b border-rose-200/60 sticky top-0 z-40 px-4 sm:px-6 py-2.5 shadow-xs">
-        <div className="max-w-6xl mx-auto flex items-center justify-between relative z-10">
-          <div
-            onClick={() => setCurrentView('game')}
-            className="flex items-center gap-2 cursor-pointer group"
-          >
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-rose-400 to-pink-500 group-hover:from-rose-500 group-hover:to-pink-600 text-white flex items-center justify-center shadow-sm shadow-rose-400/30 transition-all">
-              <Sparkles className="w-4 h-4" />
+      {/* Top Application Header - hidden in admin to maximize workspace and prevent dual-header overlap */}
+      {currentView !== 'admin' && (
+        <header className="bg-white/80 backdrop-blur-md border-b border-rose-200/60 sticky top-0 z-40 px-4 sm:px-6 py-2.5 shadow-xs">
+          <div className="max-w-6xl mx-auto flex items-center justify-between relative z-10">
+            <div
+              onClick={() => setCurrentView('game')}
+              className="flex items-center gap-2 cursor-pointer group"
+            >
+              <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-rose-400 to-pink-500 group-hover:from-rose-500 group-hover:to-pink-600 text-white flex items-center justify-center shadow-sm shadow-rose-400/30 transition-all">
+                <Sparkles className="w-4 h-4" />
+              </div>
+              <span className="font-bold text-slate-900 text-sm sm:text-base tracking-tight font-serif-display">
+                Sudoku & Lời Nhắn
+              </span>
             </div>
-            <span className="font-bold text-slate-900 text-sm sm:text-base tracking-tight font-serif-display">
-              Sudoku & Lời Nhắn
-            </span>
-          </div>
 
-          <div className="flex items-center gap-2">
-            {/* Background Music Player Controller */}
-            <MusicPlayer />
+            <div className="flex items-center gap-2">
+              {/* Background Music Player Controller */}
+              <MusicPlayer />
 
-            {/* If player already won & unlocked, show quick link */}
-            {hasUnlockedOnce && unlockedSequence && currentView !== 'messages' && (
-              <button
-                type="button"
-                onClick={() => setCurrentView('messages')}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-100 hover:bg-rose-200 text-rose-900 text-xs font-semibold transition-colors cursor-pointer border border-rose-200"
-              >
-                <Eye className="w-3.5 h-3.5 text-rose-600" />
-                <span>Xem lời nhắn</span>
-              </button>
-            )}
+              {/* If player already won & unlocked, show quick link */}
+              {hasUnlockedOnce && unlockedSequence && currentView !== 'messages' && (
+                <button
+                  type="button"
+                  onClick={() => setCurrentView('messages')}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-100 hover:bg-rose-200 text-rose-900 text-xs font-semibold transition-colors cursor-pointer border border-rose-200"
+                >
+                  <Eye className="w-3.5 h-3.5 text-rose-600" />
+                  <span>Xem lời nhắn</span>
+                </button>
+              )}
 
-            {currentView === 'messages' && (
-              <button
-                type="button"
-                onClick={() => setCurrentView('game')}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-rose-200 bg-white/90 hover:bg-white text-xs font-semibold text-rose-900 transition-colors cursor-pointer shadow-2xs"
-              >
-                <Gamepad2 className="w-3.5 h-3.5 text-rose-600" />
-                <span>Về bàn cờ</span>
-              </button>
-            )}
+              {currentView === 'messages' && (
+                <button
+                  type="button"
+                  onClick={() => setCurrentView('game')}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-rose-200 bg-white/90 hover:bg-white text-xs font-semibold text-rose-900 transition-colors cursor-pointer shadow-2xs"
+                >
+                  <Gamepad2 className="w-3.5 h-3.5 text-rose-600" />
+                  <span>Về bàn cờ</span>
+                </button>
+              )}
 
-            {/* Admin navigation button */}
-            {currentView !== 'admin' ? (
+              {/* Admin navigation button */}
               <button
                 type="button"
                 onClick={() => setCurrentView('admin')}
@@ -99,19 +100,10 @@ export default function App() {
                 <Shield className="w-3.5 h-3.5 text-rose-500" />
                 <span className="hidden sm:inline">Quản trị</span>
               </button>
-            ) : (
-              <button
-                type="button"
-                onClick={() => setCurrentView('game')}
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-rose-500 hover:bg-rose-600 text-white text-xs font-semibold transition-colors shadow-xs cursor-pointer"
-              >
-                <ArrowLeft className="w-3.5 h-3.5" />
-                <span>Thoát quản trị</span>
-              </button>
-            )}
+            </div>
           </div>
-        </div>
-      </header>
+        </header>
+      )}
 
       {/* Main View Area */}
       <main className="flex-1 flex flex-col relative z-10">
@@ -123,7 +115,7 @@ export default function App() {
         </div>
 
         {currentView === 'messages' && unlockedSequence && (
-          <div className="py-6 sm:py-8 flex-1 flex flex-col items-center justify-center">
+          <div className="py-4 sm:py-6 flex-1 flex flex-col items-center justify-center">
             <MessageViewer
               sequence={unlockedSequence}
               onBackToSudoku={() => setCurrentView('game')}
@@ -137,9 +129,11 @@ export default function App() {
       </main>
 
       {/* Minimal Footer */}
-      <footer className="mt-auto py-3 border-t border-rose-200/40 bg-white/50 backdrop-blur-xs text-center text-xs text-rose-900/60 px-4 relative z-10">
-        <span>Sudoku & Chuỗi Lời Nhắn Bí Mật • Tone hồng nhẹ nhàng</span>
-      </footer>
+      {currentView !== 'admin' && (
+        <footer className="mt-auto py-3 border-t border-rose-200/40 bg-white/50 backdrop-blur-xs text-center text-xs text-rose-900/60 px-4 relative z-10">
+          <span>Sudoku & Chuỗi Lời Nhắn Bí Mật • Tone hồng nhẹ nhàng</span>
+        </footer>
+      )}
     </div>
   );
 }
