@@ -1,0 +1,1323 @@
+{
+  "adminEmail": "caobuivan@vccorp.vn",
+  "sessions": {
+    "sess_w4yjoie21smveq3fda": {
+      "email": "caobuivan@vccorp.vn",
+      "createdAt": 1792382218894,
+      "expiresAt": 1792987018894
+    },
+    "sess_q7m8nvbykdmvf3fkei": {
+      "email": "caobuivan@vccorp.vn",
+      "createdAt": 1792404620298,
+      "expiresAt": 1793009420298
+    }
+  },
+  "puzzles": [
+    {
+      "id": "medium-puzzle-01",
+      "difficulty": "medium",
+      "cluesCount": 32,
+      "initial": [
+        [
+          0,
+          2,
+          0,
+          6,
+          0,
+          8,
+          0,
+          0,
+          0
+        ],
+        [
+          5,
+          8,
+          0,
+          0,
+          0,
+          9,
+          7,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          4,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          7,
+          0,
+          0,
+          0,
+          0,
+          5,
+          0,
+          0
+        ],
+        [
+          6,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          4
+        ],
+        [
+          0,
+          0,
+          8,
+          0,
+          0,
+          0,
+          0,
+          1,
+          3
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          2,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          9,
+          8,
+          0,
+          0,
+          0,
+          3,
+          6
+        ],
+        [
+          0,
+          0,
+          0,
+          3,
+          0,
+          6,
+          0,
+          9,
+          0
+        ]
+      ],
+      "solution": [
+        [
+          1,
+          2,
+          3,
+          6,
+          7,
+          8,
+          9,
+          4,
+          5
+        ],
+        [
+          5,
+          8,
+          4,
+          2,
+          3,
+          9,
+          7,
+          6,
+          1
+        ],
+        [
+          9,
+          6,
+          7,
+          1,
+          4,
+          5,
+          3,
+          2,
+          8
+        ],
+        [
+          3,
+          7,
+          2,
+          4,
+          6,
+          1,
+          5,
+          8,
+          9
+        ],
+        [
+          6,
+          9,
+          1,
+          5,
+          8,
+          3,
+          2,
+          7,
+          4
+        ],
+        [
+          4,
+          5,
+          8,
+          7,
+          9,
+          2,
+          6,
+          1,
+          3
+        ],
+        [
+          8,
+          3,
+          6,
+          9,
+          2,
+          4,
+          1,
+          5,
+          7
+        ],
+        [
+          2,
+          1,
+          9,
+          8,
+          5,
+          7,
+          4,
+          3,
+          6
+        ],
+        [
+          7,
+          4,
+          5,
+          3,
+          1,
+          6,
+          8,
+          9,
+          2
+        ]
+      ]
+    },
+    {
+      "id": "medium-puzzle-02",
+      "difficulty": "medium",
+      "cluesCount": 32,
+      "initial": [
+        [
+          0,
+          0,
+          0,
+          2,
+          6,
+          0,
+          7,
+          0,
+          1
+        ],
+        [
+          6,
+          8,
+          0,
+          0,
+          7,
+          0,
+          0,
+          9,
+          0
+        ],
+        [
+          1,
+          9,
+          0,
+          0,
+          0,
+          4,
+          5,
+          0,
+          0
+        ],
+        [
+          8,
+          2,
+          0,
+          1,
+          0,
+          0,
+          0,
+          4,
+          0
+        ],
+        [
+          0,
+          0,
+          4,
+          6,
+          0,
+          2,
+          9,
+          0,
+          0
+        ],
+        [
+          0,
+          5,
+          0,
+          0,
+          0,
+          3,
+          0,
+          2,
+          8
+        ],
+        [
+          0,
+          0,
+          9,
+          3,
+          0,
+          0,
+          0,
+          7,
+          4
+        ],
+        [
+          0,
+          4,
+          0,
+          0,
+          5,
+          0,
+          0,
+          3,
+          6
+        ],
+        [
+          7,
+          0,
+          3,
+          0,
+          1,
+          8,
+          0,
+          0,
+          0
+        ]
+      ],
+      "solution": [
+        [
+          4,
+          3,
+          5,
+          2,
+          6,
+          9,
+          7,
+          8,
+          1
+        ],
+        [
+          6,
+          8,
+          2,
+          5,
+          7,
+          1,
+          4,
+          9,
+          3
+        ],
+        [
+          1,
+          9,
+          7,
+          8,
+          3,
+          4,
+          5,
+          6,
+          2
+        ],
+        [
+          8,
+          2,
+          6,
+          1,
+          9,
+          5,
+          3,
+          4,
+          7
+        ],
+        [
+          3,
+          7,
+          4,
+          6,
+          8,
+          2,
+          9,
+          1,
+          5
+        ],
+        [
+          9,
+          5,
+          1,
+          7,
+          4,
+          3,
+          6,
+          2,
+          8
+        ],
+        [
+          5,
+          1,
+          9,
+          3,
+          2,
+          6,
+          8,
+          7,
+          4
+        ],
+        [
+          2,
+          4,
+          8,
+          9,
+          5,
+          7,
+          1,
+          3,
+          6
+        ],
+        [
+          7,
+          6,
+          3,
+          4,
+          1,
+          8,
+          2,
+          5,
+          9
+        ]
+      ]
+    },
+    {
+      "id": "medium-puzzle-03",
+      "difficulty": "medium",
+      "cluesCount": 33,
+      "initial": [
+        [
+          1,
+          0,
+          0,
+          4,
+          8,
+          9,
+          0,
+          0,
+          6
+        ],
+        [
+          7,
+          3,
+          0,
+          0,
+          0,
+          0,
+          0,
+          4,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          2,
+          9,
+          5
+        ],
+        [
+          0,
+          0,
+          7,
+          1,
+          2,
+          0,
+          6,
+          0,
+          0
+        ],
+        [
+          5,
+          0,
+          0,
+          7,
+          0,
+          3,
+          0,
+          0,
+          8
+        ],
+        [
+          0,
+          0,
+          6,
+          0,
+          9,
+          5,
+          7,
+          0,
+          0
+        ],
+        [
+          9,
+          1,
+          4,
+          6,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          7
+        ],
+        [
+          8,
+          0,
+          0,
+          5,
+          1,
+          2,
+          0,
+          0,
+          4
+        ]
+      ],
+      "solution": [
+        [
+          1,
+          5,
+          2,
+          4,
+          8,
+          9,
+          3,
+          7,
+          6
+        ],
+        [
+          7,
+          3,
+          9,
+          2,
+          5,
+          6,
+          8,
+          4,
+          1
+        ],
+        [
+          4,
+          6,
+          8,
+          3,
+          7,
+          1,
+          2,
+          9,
+          5
+        ],
+        [
+          3,
+          8,
+          7,
+          1,
+          2,
+          4,
+          6,
+          5,
+          9
+        ],
+        [
+          5,
+          9,
+          1,
+          7,
+          6,
+          3,
+          4,
+          2,
+          8
+        ],
+        [
+          2,
+          4,
+          6,
+          8,
+          9,
+          5,
+          7,
+          1,
+          3
+        ],
+        [
+          9,
+          1,
+          4,
+          6,
+          3,
+          7,
+          5,
+          8,
+          2
+        ],
+        [
+          6,
+          2,
+          5,
+          9,
+          4,
+          8,
+          1,
+          3,
+          7
+        ],
+        [
+          8,
+          7,
+          3,
+          5,
+          1,
+          2,
+          9,
+          6,
+          4
+        ]
+      ]
+    },
+    {
+      "id": "medium-puzzle-04",
+      "difficulty": "medium",
+      "cluesCount": 31,
+      "initial": [
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          2
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          3,
+          5,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          6,
+          0,
+          0,
+          0,
+          7,
+          0
+        ],
+        [
+          7,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          4,
+          0,
+          0,
+          8,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          1,
+          2,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          8,
+          0,
+          0,
+          0,
+          0,
+          0,
+          4,
+          0
+        ],
+        [
+          0,
+          5,
+          0,
+          0,
+          0,
+          0,
+          6,
+          0,
+          0
+        ]
+      ],
+      "solution": [
+        [
+          6,
+          7,
+          3,
+          8,
+          9,
+          4,
+          5,
+          1,
+          2
+        ],
+        [
+          9,
+          1,
+          2,
+          7,
+          3,
+          5,
+          4,
+          8,
+          6
+        ],
+        [
+          8,
+          4,
+          5,
+          6,
+          1,
+          2,
+          9,
+          7,
+          3
+        ],
+        [
+          7,
+          9,
+          8,
+          2,
+          6,
+          1,
+          3,
+          5,
+          4
+        ],
+        [
+          5,
+          2,
+          6,
+          4,
+          7,
+          3,
+          8,
+          9,
+          1
+        ],
+        [
+          1,
+          3,
+          4,
+          5,
+          8,
+          9,
+          2,
+          6,
+          7
+        ],
+        [
+          4,
+          6,
+          9,
+          1,
+          2,
+          8,
+          7,
+          3,
+          5
+        ],
+        [
+          2,
+          8,
+          7,
+          3,
+          5,
+          6,
+          1,
+          4,
+          9
+        ],
+        [
+          3,
+          5,
+          1,
+          9,
+          4,
+          7,
+          6,
+          2,
+          8
+        ]
+      ]
+    }
+  ],
+  "draftMessages": {
+    "id": "secret-sequence-default",
+    "version": 1,
+    "updatedAt": "2026-10-19T03:56:28.457Z",
+    "publishedAt": "2026-10-19T03:56:28.458Z",
+    "layers": [
+      {
+        "id": "layer-intro",
+        "title": "Màn 1: Chúc mừng chiến thắng",
+        "theme": "amber",
+        "components": [
+          {
+            "id": "c-title-1",
+            "type": "title",
+            "titleProps": {
+              "text": "Chúc Mừng Bạn Đã Thắng Sudoku!",
+              "align": "center",
+              "fontSize": "xl"
+            }
+          },
+          {
+            "id": "c-img-1",
+            "type": "image",
+            "imageProps": {
+              "url": "https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=1000&q=80",
+              "caption": "Món quà bí mật dành riêng cho bạn",
+              "alt": "Chúc mừng chiến thắng"
+            }
+          },
+          {
+            "id": "c-text-1",
+            "type": "text",
+            "textProps": {
+              "text": "Bạn đã xuất sắc chinh phục bàn Sudoku mức trung bình bằng sự kiên nhẫn và suy luận nhạy bén. Đây là bức thư được chuẩn bị riêng cho bạn với nhiều tầng cảm xúc.",
+              "align": "center",
+              "style": "normal"
+            }
+          },
+          {
+            "id": "c-btn-1",
+            "type": "next_button",
+            "buttonProps": {
+              "label": "Mở bức thư bí mật ✨",
+              "targetLayerId": "layer-quiz"
+            }
+          }
+        ],
+        "defaultNextLayerId": "layer-quiz"
+      },
+      {
+        "id": "layer-quiz",
+        "title": "Màn 2: Trắc nghiệm tâm tình",
+        "theme": "rose",
+        "components": [
+          {
+            "id": "c-title-2",
+            "type": "title",
+            "titleProps": {
+              "text": "Một Câu Hỏi Dành Cho Bạn",
+              "align": "center",
+              "fontSize": "lg"
+            }
+          },
+          {
+            "id": "c-text-2",
+            "type": "text",
+            "textProps": {
+              "text": "Trước khi tiếp tục, hãy chia sẻ điều đang dẫn lối cho trái tim bạn:",
+              "align": "center",
+              "style": "normal"
+            }
+          },
+          {
+            "id": "c-quiz-1",
+            "type": "quiz",
+            "quizProps": {
+              "question": "Khi đứng trước một hành trình mới, điều gì tiếp thêm cho bạn nhiều năng lượng nhất?",
+              "options": [
+                {
+                  "id": "opt-resilience",
+                  "label": "Ý chí kiên định và bản lĩnh tự thân 🌟",
+                  "targetLayerId": "layer-resilience"
+                },
+                {
+                  "id": "opt-connection",
+                  "label": "Sự yêu thương và kết nối ấm áp từ người đồng hành ☕",
+                  "targetLayerId": "layer-connection"
+                }
+              ]
+            }
+          }
+        ],
+        "defaultNextLayerId": "layer-resilience"
+      },
+      {
+        "id": "layer-resilience",
+        "title": "Màn 3A: Nhánh Bản lĩnh",
+        "theme": "indigo",
+        "components": [
+          {
+            "id": "c-title-3a",
+            "type": "title",
+            "titleProps": {
+              "text": "Ngọn Hải Đăng Của Ý Chí",
+              "align": "center",
+              "fontSize": "lg"
+            }
+          },
+          {
+            "id": "c-img-3a",
+            "type": "image",
+            "imageProps": {
+              "url": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1000&q=80",
+              "caption": "Vững vàng trước mọi thử thách",
+              "alt": "Bình minh và biển rộng"
+            }
+          },
+          {
+            "id": "c-text-3a",
+            "type": "text",
+            "textProps": {
+              "text": "Nội lực và sự kiên trì của bạn tựa như ánh hải đăng vững chãi trong đêm tối. Dù con đường phía trước có thử thách đến đâu, bạn luôn có đủ trí tuệ để tìm ra lời giải đẹp nhất.",
+              "align": "center",
+              "style": "normal"
+            }
+          },
+          {
+            "id": "c-btn-3a",
+            "type": "next_button",
+            "buttonProps": {
+              "label": "Đọc lời chúc kết thúc →",
+              "targetLayerId": "layer-final"
+            }
+          }
+        ],
+        "defaultNextLayerId": "layer-final"
+      },
+      {
+        "id": "layer-connection",
+        "title": "Màn 3B: Nhánh Kết nối",
+        "theme": "emerald",
+        "components": [
+          {
+            "id": "c-title-3b",
+            "type": "title",
+            "titleProps": {
+              "text": "Tách Trà Ấm & Những Yêu Thương",
+              "align": "center",
+              "fontSize": "lg"
+            }
+          },
+          {
+            "id": "c-img-3b",
+            "type": "image",
+            "imageProps": {
+              "url": "https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=1000&q=80",
+              "caption": "Ấm áp giữa những khoảnh khắc dịu êm",
+              "alt": "Tách trà và cuốn sách"
+            }
+          },
+          {
+            "id": "c-text-3b",
+            "type": "text",
+            "textProps": {
+              "text": "Những điều ngọt ngào nhất trên thế gian luôn bắt đầu từ sự chân thành và thấu hiểu. Cảm ơn bạn vì đã luôn mang đến nguồn năng lượng dịu dàng, tử tế cho những người xung quanh.",
+              "align": "center",
+              "style": "normal"
+            }
+          },
+          {
+            "id": "c-btn-3b",
+            "type": "next_button",
+            "buttonProps": {
+              "label": "Đọc lời chúc kết thúc →",
+              "targetLayerId": "layer-final"
+            }
+          }
+        ],
+        "defaultNextLayerId": "layer-final"
+      },
+      {
+        "id": "layer-final",
+        "title": "Màn 4: Lời chúc bình an",
+        "theme": "warm",
+        "components": [
+          {
+            "id": "c-title-4",
+            "type": "title",
+            "titleProps": {
+              "text": "Chúc Bạn Luôn Rạng Rỡ & Bình An",
+              "align": "center",
+              "fontSize": "xl"
+            }
+          },
+          {
+            "id": "c-img-4",
+            "type": "image",
+            "imageProps": {
+              "url": "https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&w=1000&q=80",
+              "caption": "Nắng ấm ngập tràn lối đi",
+              "alt": "Ánh nắng bình yên"
+            }
+          },
+          {
+            "id": "c-text-4",
+            "type": "text",
+            "textProps": {
+              "text": "Cuộc sống đôi khi cũng giống như một bàn cờ nhiều ô trống: chỉ cần bình tĩnh suy ngẫm, mọi nút thắt đều sẽ tìm thấy câu trả lời hoàn hảo. Chúc bạn mỗi ngày đều đầy ắp nụ cười, hạnh phúc và thành công rực rỡ!",
+              "align": "center",
+              "style": "normal"
+            }
+          },
+          {
+            "id": "c-text-signature",
+            "type": "text",
+            "textProps": {
+              "text": "— Gửi từ một người luôn ủng hộ và dõi theo bạn 💛",
+              "align": "center",
+              "style": "italic"
+            }
+          },
+          {
+            "id": "c-btn-restart",
+            "type": "next_button",
+            "buttonProps": {
+              "label": "Đọc lại từ đầu 🔄",
+              "targetLayerId": "layer-intro"
+            }
+          }
+        ],
+        "defaultNextLayerId": "layer-intro"
+      }
+    ]
+  },
+  "publishedMessages": {
+    "id": "secret-sequence-default",
+    "version": 1,
+    "updatedAt": "2026-10-19T03:56:28.457Z",
+    "publishedAt": "2026-10-19T03:56:28.458Z",
+    "layers": [
+      {
+        "id": "layer-intro",
+        "title": "Màn 1: Chúc mừng chiến thắng",
+        "theme": "amber",
+        "components": [
+          {
+            "id": "c-title-1",
+            "type": "title",
+            "titleProps": {
+              "text": "Chúc Mừng Bạn Đã Thắng Sudoku!",
+              "align": "center",
+              "fontSize": "xl"
+            }
+          },
+          {
+            "id": "c-img-1",
+            "type": "image",
+            "imageProps": {
+              "url": "https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=1000&q=80",
+              "caption": "Món quà bí mật dành riêng cho bạn",
+              "alt": "Chúc mừng chiến thắng"
+            }
+          },
+          {
+            "id": "c-text-1",
+            "type": "text",
+            "textProps": {
+              "text": "Bạn đã xuất sắc chinh phục bàn Sudoku mức trung bình bằng sự kiên nhẫn và suy luận nhạy bén. Đây là bức thư được chuẩn bị riêng cho bạn với nhiều tầng cảm xúc.",
+              "align": "center",
+              "style": "normal"
+            }
+          },
+          {
+            "id": "c-btn-1",
+            "type": "next_button",
+            "buttonProps": {
+              "label": "Mở bức thư bí mật ✨",
+              "targetLayerId": "layer-quiz"
+            }
+          }
+        ],
+        "defaultNextLayerId": "layer-quiz"
+      },
+      {
+        "id": "layer-quiz",
+        "title": "Màn 2: Trắc nghiệm tâm tình",
+        "theme": "rose",
+        "components": [
+          {
+            "id": "c-title-2",
+            "type": "title",
+            "titleProps": {
+              "text": "Một Câu Hỏi Dành Cho Bạn",
+              "align": "center",
+              "fontSize": "lg"
+            }
+          },
+          {
+            "id": "c-text-2",
+            "type": "text",
+            "textProps": {
+              "text": "Trước khi tiếp tục, hãy chia sẻ điều đang dẫn lối cho trái tim bạn:",
+              "align": "center",
+              "style": "normal"
+            }
+          },
+          {
+            "id": "c-quiz-1",
+            "type": "quiz",
+            "quizProps": {
+              "question": "Khi đứng trước một hành trình mới, điều gì tiếp thêm cho bạn nhiều năng lượng nhất?",
+              "options": [
+                {
+                  "id": "opt-resilience",
+                  "label": "Ý chí kiên định và bản lĩnh tự thân 🌟",
+                  "targetLayerId": "layer-resilience"
+                },
+                {
+                  "id": "opt-connection",
+                  "label": "Sự yêu thương và kết nối ấm áp từ người đồng hành ☕",
+                  "targetLayerId": "layer-connection"
+                }
+              ]
+            }
+          }
+        ],
+        "defaultNextLayerId": "layer-resilience"
+      },
+      {
+        "id": "layer-resilience",
+        "title": "Màn 3A: Nhánh Bản lĩnh",
+        "theme": "indigo",
+        "components": [
+          {
+            "id": "c-title-3a",
+            "type": "title",
+            "titleProps": {
+              "text": "Ngọn Hải Đăng Của Ý Chí",
+              "align": "center",
+              "fontSize": "lg"
+            }
+          },
+          {
+            "id": "c-img-3a",
+            "type": "image",
+            "imageProps": {
+              "url": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1000&q=80",
+              "caption": "Vững vàng trước mọi thử thách",
+              "alt": "Bình minh và biển rộng"
+            }
+          },
+          {
+            "id": "c-text-3a",
+            "type": "text",
+            "textProps": {
+              "text": "Nội lực và sự kiên trì của bạn tựa như ánh hải đăng vững chãi trong đêm tối. Dù con đường phía trước có thử thách đến đâu, bạn luôn có đủ trí tuệ để tìm ra lời giải đẹp nhất.",
+              "align": "center",
+              "style": "normal"
+            }
+          },
+          {
+            "id": "c-btn-3a",
+            "type": "next_button",
+            "buttonProps": {
+              "label": "Đọc lời chúc kết thúc →",
+              "targetLayerId": "layer-final"
+            }
+          }
+        ],
+        "defaultNextLayerId": "layer-final"
+      },
+      {
+        "id": "layer-connection",
+        "title": "Màn 3B: Nhánh Kết nối",
+        "theme": "emerald",
+        "components": [
+          {
+            "id": "c-title-3b",
+            "type": "title",
+            "titleProps": {
+              "text": "Tách Trà Ấm & Những Yêu Thương",
+              "align": "center",
+              "fontSize": "lg"
+            }
+          },
+          {
+            "id": "c-img-3b",
+            "type": "image",
+            "imageProps": {
+              "url": "https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=1000&q=80",
+              "caption": "Ấm áp giữa những khoảnh khắc dịu êm",
+              "alt": "Tách trà và cuốn sách"
+            }
+          },
+          {
+            "id": "c-text-3b",
+            "type": "text",
+            "textProps": {
+              "text": "Những điều ngọt ngào nhất trên thế gian luôn bắt đầu từ sự chân thành và thấu hiểu. Cảm ơn bạn vì đã luôn mang đến nguồn năng lượng dịu dàng, tử tế cho những người xung quanh.",
+              "align": "center",
+              "style": "normal"
+            }
+          },
+          {
+            "id": "c-btn-3b",
+            "type": "next_button",
+            "buttonProps": {
+              "label": "Đọc lời chúc kết thúc →",
+              "targetLayerId": "layer-final"
+            }
+          }
+        ],
+        "defaultNextLayerId": "layer-final"
+      },
+      {
+        "id": "layer-final",
+        "title": "Màn 4: Lời chúc bình an",
+        "theme": "warm",
+        "components": [
+          {
+            "id": "c-title-4",
+            "type": "title",
+            "titleProps": {
+              "text": "Chúc Bạn Luôn Rạng Rỡ & Bình An",
+              "align": "center",
+              "fontSize": "xl"
+            }
+          },
+          {
+            "id": "c-img-4",
+            "type": "image",
+            "imageProps": {
+              "url": "https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&w=1000&q=80",
+              "caption": "Nắng ấm ngập tràn lối đi",
+              "alt": "Ánh nắng bình yên"
+            }
+          },
+          {
+            "id": "c-text-4",
+            "type": "text",
+            "textProps": {
+              "text": "Cuộc sống đôi khi cũng giống như một bàn cờ nhiều ô trống: chỉ cần bình tĩnh suy ngẫm, mọi nút thắt đều sẽ tìm thấy câu trả lời hoàn hảo. Chúc bạn mỗi ngày đều đầy ắp nụ cười, hạnh phúc và thành công rực rỡ!",
+              "align": "center",
+              "style": "normal"
+            }
+          },
+          {
+            "id": "c-text-signature",
+            "type": "text",
+            "textProps": {
+              "text": "— Gửi từ một người luôn ủng hộ và dõi theo bạn 💛",
+              "align": "center",
+              "style": "italic"
+            }
+          },
+          {
+            "id": "c-btn-restart",
+            "type": "next_button",
+            "buttonProps": {
+              "label": "Đọc lại từ đầu 🔄",
+              "targetLayerId": "layer-intro"
+            }
+          }
+        ],
+        "defaultNextLayerId": "layer-intro"
+      }
+    ]
+  },
+  "unlockTokens": {
+    "unlock_9jhb2swgw2mveq3aky": {
+      "puzzleId": "medium-puzzle-01",
+      "expiresAt": 1792389412690
+    },
+    "unlock_e327pztx96mvf3futw": {
+      "puzzleId": "medium-puzzle-01",
+      "expiresAt": 1792411833812
+    }
+  }
+}

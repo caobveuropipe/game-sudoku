@@ -1,0 +1,6 @@
+{
+  "name": "Sudoku & Chuỗi Lời Nhắn Bí Mật",
+  "description": "Trò chơi Sudoku mức trung bình mở khóa chuỗi lời nhắn bí mật đa lớp, kèm trang quản trị trực quan xác thực Google OAuth.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
